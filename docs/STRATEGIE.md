@@ -40,21 +40,29 @@ sans diluer le discours.
 
 ## 3. Direction artistique
 
-**Concept : « le document de travail »** — papier, encre & vermillon.
+**Concept : « Signal »** — dans le bruit des pages identiques (la nuit
+d'encre), votre page est le signal (le faisceau vermillon).
 
-- Palette : papier chaud `#F7F3EA`, encre `#1A1713`, vermillon `#E24A1B`
-  (graphique) / `#A5350F` (texte, contraste 6:1). Tokens dans
-  `src/styles/global.css`.
-- Typographie : une seule famille, **Fraunces variable** (auto-hébergée,
-  ~80 Ko + italique), du display au corps de texte ; mono système pour les
-  étiquettes techniques. Signature forte à coût de chargement minimal.
-- Système : filets d'imprimeur, sections numérotées (folio), cartouche de
-  mission, notes de marge, astérisque signature ✳.
+- Palette : nuit d'encre `#0C0B09`, surfaces `#16130F`, lumière `#F4F1EA`,
+  vermillon électrique `#FF4A1F` (graphique/CTA) / `#FF6B3D` (texte accent,
+  6.9:1). Bandes claires inversées pour les zones de conversion (CtaBand,
+  footer) et la section « Pour qui ». Tokens dans `src/styles/global.css`
+  (noms historiques conservés comme API : `--paper` = fond, `--ink` =
+  premier plan).
+- Typographie : une seule famille, **Bricolage Grotesque variable**
+  (auto-hébergée, ~77 Ko), du display monumental (750) au corps de texte ;
+  mono système pour les étiquettes techniques façon relevé d'instrument.
+- Système : halos réservés aux éléments de conversion (CTA incandescents),
+  faisceau lumineux des kickers, cartouche « fiche de mission », astérisque
+  signature ✳ (ambiant en rotation lente dans le hero), bandeau défilant,
+  barre de progression de lecture, entrée séquencée du hero (CSS pur).
 - **Signature interactive : le mode coulisses** — un calque d'annotations
-  révèle les décisions de conception à même la page. C'est la démonstration
-  du positionnement (« on vend de la réflexion, la voici »).
-- Anti-modèles bannis : dégradés violets, glassmorphism, bento grids, fonds
-  sombres par défaut, mockups génériques, animations de texte à la mode.
+  lumineuses révèle les décisions de conception à même la page.
+- Motion : tout est gouverné par `prefers-reduced-motion` et par la classe
+  `.js` (aucun contenu masqué sans JavaScript).
+- Anti-modèles bannis : dégradés violets, glassmorphism, bento grids,
+  mockups génériques, animations de texte à la mode. Le noir n'est pas un
+  fond par défaut : il est le concept (le bruit) que le vermillon perce.
 
 ## 4. Parcours de conversion
 

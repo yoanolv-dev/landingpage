@@ -13,8 +13,9 @@ La stratégie complète (positionnement, SEO, roadmap) est documentée dans
   premier octet, zéro JavaScript par défaut (les seuls scripts sont de petits
   îlots vanilla : menu, démonstration, checklist, formulaire, mode coulisses).
 - **CSS vanilla** avec design tokens (`src/styles/global.css`) — pas de
-  framework CSS.
-- **Fraunces variable** auto-hébergée (~80 Ko + italique), seule police
+  framework CSS. Identité « Signal » : nuit d'encre, accent vermillon
+  électrique, bandes claires pour les zones de conversion.
+- **Bricolage Grotesque variable** auto-hébergée (~77 Ko), seule police
   chargée.
 - **MDX** pour les articles du guide (collection `src/content/guide/`).
 - **@astrojs/sitemap** + robots.txt généré + données structurées JSON-LD.

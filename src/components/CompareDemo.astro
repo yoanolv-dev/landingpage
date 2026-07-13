@@ -160,10 +160,14 @@
 
   /* ----- maquettes miniatures ----- */
 
+  /* Les maquettes sont des mini-pages web claires : leur palette est
+     volontairement figée, indépendante du thème sombre du site. */
   .mock {
-    border: var(--hairline);
+    border: 1px solid #e5e0d2;
+    border-radius: 6px;
     background: #fff;
-    box-shadow: 0 6px 24px rgb(26 23 19 / 0.07);
+    color: #3d3a33;
+    box-shadow: 0 10px 34px rgb(0 0 0 / 0.35);
   }
 
   .mock-nav {
@@ -258,22 +262,23 @@
 
   /* Version B — la page conçue */
   .mock-nav--apres {
-    border-bottom-color: var(--paper-line);
+    border-bottom-color: #e5e0d2;
   }
 
   .mock--apres .mock-logo {
     font-family: var(--font-serif);
-    font-weight: 600;
+    font-weight: 700;
     font-size: 0.85rem;
     letter-spacing: 0;
+    color: #171310;
   }
 
   .mock-cta-mini {
     font-size: 0.6rem;
     font-family: var(--font-mono);
     padding: 0.45em 0.9em;
-    background: var(--ink);
-    color: var(--paper);
+    background: #171310;
+    color: #f4f1ea;
     border-radius: 2px;
   }
 
@@ -287,23 +292,23 @@
     font-size: 0.58rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--vermillon-ink);
+    color: #a5350f;
     margin: 0 0 0.6rem;
   }
 
   .mock-h1-apres {
     font-family: var(--font-serif);
     font-size: clamp(1.05rem, 2.8vw, 1.55rem);
-    font-weight: 560;
-    line-height: 1.15;
-    letter-spacing: -0.01em;
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
     margin: 0 0 0.6rem;
-    color: var(--ink);
+    color: #171310;
   }
 
   .mock-sub-apres {
     font-size: 0.72rem;
-    color: var(--ink-soft);
+    color: #57503f;
     margin: 0 0 1rem;
   }
 
@@ -318,7 +323,7 @@
     flex: 1 1 9rem;
     font-size: 0.65rem;
     color: #9a937f;
-    border: 1px solid var(--paper-line);
+    border: 1px solid #ddd5c2;
     border-radius: 2px;
     padding: 0.55em 0.8em;
     background: #fff;
@@ -326,9 +331,9 @@
 
   .mock-btn-apres {
     font-size: 0.65rem;
-    font-weight: 600;
+    font-weight: 700;
     padding: 0.55em 1em;
-    background: var(--vermillon);
+    background: #e83c12;
     color: #fff;
     border-radius: 2px;
     white-space: nowrap;
@@ -337,7 +342,7 @@
   .mock-reassure {
     font-size: 0.6rem;
     font-family: var(--font-mono);
-    color: var(--ink-faint);
+    color: #857d69;
     margin: 0;
   }
 

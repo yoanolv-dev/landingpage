@@ -133,10 +133,14 @@ const etapes = [
 <Base title={title} description={description} jsonLd={jsonLd} brandInTitle={false}>
   <!-- ============ HERO ============ -->
   <section class="hero annotated" aria-label="Introduction">
+    <div class="hero-glow" aria-hidden="true"></div>
+    <span class="hero-asterisk" aria-hidden="true">✳</span>
     <div class="container hero-grid">
       <div class="hero-main">
-        <p class="kicker">Studio indépendant · France, à distance</p>
-        <h1>
+        <p class="kicker" data-stagger style="--stagger: 0">
+          Studio indépendant · France, à distance
+        </p>
+        <h1 data-stagger style="--stagger: 1">
           Votre prochaine landing page, construite comme un
           <em>argumentaire de vente</em><a
             href="#colophon-note"
@@ -145,25 +149,26 @@ const etapes = [
             aria-label="Note : cette page applique ce qu'elle promet">✳</a
           >
         </h1>
-        <p class="lede">
+        <p class="lede" data-stagger style="--stagger: 2">
           {site.brand} conçoit des <strong>landing pages sur mesure</strong> —
           stratégie, message, design et développement assemblés par un seul
           interlocuteur — pour transformer votre offre en une page claire,
           crédible, et faite pour provoquer la décision.
         </p>
-        <div class="hero-actions">
+        <div class="hero-actions" data-stagger style="--stagger: 3">
           <a href={site.cta.href} class="btn" data-track="cta-hero">
             {site.cta.label} <span class="arrow" aria-hidden="true">→</span>
           </a>
           <a href="/methode/" class="btn btn--ghost">Lire la méthode</a>
         </div>
-        <p class="btn-note">
+        <p class="btn-note" data-stagger style="--stagger: 4">
           Sans engagement — {site.commitments.responseTime}, avec un premier
           avis honnête. Même si c'est « non ».
         </p>
       </div>
 
-      <aside class="cartouche" aria-label="Fiche de mission résumée">
+      <aside class="cartouche" aria-label="Fiche de mission résumée" data-stagger style="--stagger: 5">
+        <p class="cartouche-titre mono" aria-hidden="true">Fiche de mission</p>
         <dl>
           <div><dt>Objet</dt><dd>Landing page sur mesure</dd></div>
           <div><dt>Périmètre</dt><dd>Stratégie · Texte · Design · Code</dd></div>
@@ -180,6 +185,27 @@ const etapes = [
       </Annotation>
     </div>
   </section>
+
+  <!-- ============ BANDEAU SIGNAL ============ -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      {
+        [0, 1].map(() => (
+          <span class="marquee-item">
+            Stratégie <span class="asterisk">✳</span> Copywriting
+            <span class="asterisk">✳</span> Direction artistique
+            <span class="asterisk">✳</span> Développement
+            <span class="asterisk">✳</span> SEO
+            <span class="asterisk">✳</span> Mesure
+            <span class="asterisk">✳</span>
+          </span>
+        ))
+      }
+    </div>
+  </div>
+  <p class="sr-only">
+    Stratégie, copywriting, direction artistique, développement, SEO, mesure.
+  </p>
 
   <!-- ============ SOMMAIRE ============ -->
   <nav class="sommaire annotated" aria-label="Sommaire de la page">
@@ -491,20 +517,86 @@ const etapes = [
     </p>
   </div>
 
+  <!-- CTA collant mobile — visible après le hero -->
+  <div class="sticky-cta" id="sticky-cta" hidden>
+    <a href={site.cta.href} class="btn" data-track="cta-sticky-mobile">
+      {site.cta.label} <span class="arrow" aria-hidden="true">→</span>
+    </a>
+  </div>
+
   <BackstageToggle />
 </Base>
 
+<script>
+  // CTA mobile collant : apparaît une fois le hero dépassé.
+  const sticky = document.getElementById('sticky-cta');
+  if (sticky) {
+    let ticking = false;
+    const toggle = () => {
+      sticky.hidden = window.scrollY < 640;
+      ticking = false;
+    };
+    addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(toggle);
+        }
+      },
+      { passive: true }
+    );
+  }
+</script>
+
+
 <style>
-  /* ---------- Hero ---------- */
+  /* ---------- Hero — le signal s'allume ---------- */
   .hero {
-    padding-block: clamp(4rem, 3rem + 6vw, 8rem) clamp(3rem, 2rem + 4vw, 6rem);
+    position: relative;
+    overflow: clip;
+    padding-block: clamp(3.5rem, 2.5rem + 5vw, 7rem) clamp(3rem, 2rem + 4vw, 5.5rem);
+  }
+
+  .hero-glow {
+    position: absolute;
+    inset: -15% -10% auto -10%;
+    height: 46rem;
+    background:
+      radial-gradient(40rem 26rem at 16% 28%, rgb(255 74 31 / 0.14), transparent 65%),
+      radial-gradient(30rem 24rem at 88% 4%, rgb(255 74 31 / 0.07), transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-asterisk {
+    position: absolute;
+    top: -8rem;
+    right: -7rem;
+    font-size: clamp(18rem, 32vw, 36rem);
+    line-height: 1;
+    color: rgb(255 74 31 / 0.08);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-asterisk {
+      animation: hero-spin 110s linear infinite;
+    }
+
+    @keyframes hero-spin {
+      to {
+        rotate: 360deg;
+      }
+    }
   }
 
   .hero-grid {
+    position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 1.7fr) minmax(16rem, 1fr);
+    grid-template-columns: minmax(0, 2.2fr) minmax(16rem, 1fr);
     gap: var(--space-12);
-    align-items: start;
+    align-items: end;
   }
 
   .hero h1 {
@@ -512,12 +604,13 @@ const etapes = [
   }
 
   .hero h1 em {
-    font-style: italic;
+    font-style: normal;
     color: var(--vermillon-ink);
+    text-shadow: 0 0 22px rgb(255 74 31 / 0.28);
   }
 
   .footnote-call {
-    font-size: 0.45em;
+    font-size: 0.4em;
     vertical-align: super;
     text-decoration: none;
     color: var(--vermillon);
@@ -531,13 +624,33 @@ const etapes = [
     margin-top: var(--space-8);
   }
 
-  /* Cartouche — fiche de mission façon document technique */
+  /* Cartouche — fiche de mission façon relevé d'instrument */
   .cartouche {
-    border: 1px solid var(--ink);
-    background: var(--paper);
+    position: relative;
+    border: var(--hairline);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--paper-deep) 85%, transparent);
+    backdrop-filter: blur(8px);
     padding: var(--space-6);
     font-size: var(--text-sm);
-    margin-top: var(--space-4);
+  }
+
+  .cartouche::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 2px;
+    border-radius: 2px;
+    background: linear-gradient(var(--vermillon), transparent 85%);
+    box-shadow: 0 0 14px rgb(255 74 31 / 0.5);
+  }
+
+  .cartouche-titre {
+    font-size: var(--text-xs);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 var(--space-4);
   }
 
   .cartouche dl {
@@ -557,12 +670,11 @@ const etapes = [
 
   .cartouche dd {
     margin: 0;
-    font-weight: 480;
+    font-weight: 560;
   }
 
   /* ---------- Sommaire ---------- */
   .sommaire {
-    border-top: var(--hairline);
     border-bottom: var(--hairline);
     background: var(--paper);
   }
@@ -589,9 +701,14 @@ const etapes = [
     color: inherit;
   }
 
+  .sommaire-list a:hover .sommaire-label {
+    color: var(--vermillon-ink);
+  }
+
   .sommaire-label {
-    font-weight: 600;
-    font-variation-settings: 'opsz' 30;
+    font-weight: 680;
+    letter-spacing: -0.01em;
+    transition: color var(--speed) var(--ease);
   }
 
   .sommaire-desc {
@@ -633,7 +750,8 @@ const etapes = [
     margin: 0;
     padding: var(--space-4) var(--space-6);
     border-left: 2px solid var(--vermillon);
-    background: color-mix(in srgb, var(--vermillon) 6%, transparent);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    background: color-mix(in srgb, var(--vermillon) 9%, transparent);
   }
 
   /* ---------- 03 Méthode ---------- */
@@ -659,6 +777,7 @@ const etapes = [
     font-family: var(--font-mono);
     font-size: var(--text-lg);
     color: var(--vermillon);
+    text-shadow: 0 0 16px rgb(255 74 31 / 0.5);
   }
 
   .etape h3 {
@@ -684,7 +803,7 @@ const etapes = [
 
   .methode-more {
     margin-top: var(--space-8);
-    font-weight: 520;
+    font-weight: 600;
   }
 
   /* ---------- 04 Offres ---------- */
@@ -698,8 +817,13 @@ const etapes = [
     grid-template-columns: minmax(12rem, 1fr) 1.4fr 1fr auto;
     gap: var(--space-6) var(--space-8);
     align-items: start;
-    padding-block: var(--space-8);
+    padding: var(--space-8) var(--space-4);
     border-top: var(--hairline);
+    transition: background var(--speed) var(--ease);
+  }
+
+  .offre:hover {
+    background: var(--paper-deep);
   }
 
   .offre:last-child {
@@ -731,6 +855,7 @@ const etapes = [
   .offre-livrable {
     font-size: var(--text-sm);
     margin: 0;
+    color: var(--ink-soft);
   }
 
   .offre-meta {
@@ -750,11 +875,11 @@ const etapes = [
 
   .offre-meta dd {
     margin: 0;
-    font-weight: 520;
+    font-weight: 600;
   }
 
   .offre > a {
-    font-weight: 520;
+    font-weight: 600;
     white-space: nowrap;
     align-self: center;
   }
@@ -765,7 +890,7 @@ const etapes = [
     color: var(--ink-soft);
   }
 
-  /* ---------- Pour qui ---------- */
+  /* ---------- Pour qui (bande claire) ---------- */
   .situations {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -774,9 +899,9 @@ const etapes = [
 
   .situation-cas {
     font-size: var(--text-xl);
-    font-weight: 560;
-    font-variation-settings: 'opsz' 40;
-    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.12;
     margin-bottom: var(--space-2);
     text-wrap: balance;
   }
@@ -798,14 +923,19 @@ const etapes = [
     gap: var(--space-3);
     align-content: start;
     padding: var(--space-8);
-    border: 1px solid var(--ink);
+    border: var(--hairline);
+    border-radius: var(--radius);
+    background: var(--paper-deep);
     text-decoration: none;
-    transition: background var(--speed) var(--ease);
+    transition: border-color var(--speed) var(--ease), translate var(--speed) var(--ease),
+      box-shadow var(--speed) var(--ease);
   }
 
   .preuve:hover {
-    background: var(--paper-deep);
     color: inherit;
+    border-color: color-mix(in srgb, var(--vermillon) 55%, transparent);
+    translate: 0 -4px;
+    box-shadow: 0 12px 40px rgb(0 0 0 / 0.4), 0 0 24px rgb(255 74 31 / 0.12);
   }
 
   .preuve h3 {
@@ -819,7 +949,7 @@ const etapes = [
   }
 
   .preuve-more {
-    font-weight: 520;
+    font-weight: 600;
     color: var(--vermillon-ink);
   }
 
@@ -827,9 +957,39 @@ const etapes = [
   .footnote {
     max-width: var(--measure);
     font-size: var(--text-sm);
-    font-style: italic;
-    color: var(--ink-soft);
+    color: var(--ink-faint);
     padding-block: var(--space-8);
+  }
+
+  /* ---------- CTA collant mobile ---------- */
+  .sticky-cta {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 55;
+    padding: var(--space-3) var(--gutter)
+      calc(var(--space-3) + env(safe-area-inset-bottom));
+    background: color-mix(in srgb, var(--paper) 80%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-top: var(--hairline);
+  }
+
+  .sticky-cta .btn {
+    width: 100%;
+  }
+
+  @media (min-width: 56rem) {
+    .sticky-cta {
+      display: none !important;
+    }
+  }
+
+  @media (max-width: 56rem) {
+    /* La barre CTA mobile occupe le bas de l'écran : le bouton coulisses
+       remonte au-dessus (priorité forcée face à son style de composant). */
+    :global(.backstage-toggle) {
+      bottom: 6.6rem !important;
+    }
   }
 
   /* ---------- Responsive ---------- */
@@ -868,6 +1028,12 @@ const etapes = [
       gap: var(--space-8);
     }
 
+    .hero-asterisk {
+      top: -4rem;
+      right: -6rem;
+      font-size: 18rem;
+    }
+
     .cartouche {
       max-width: 26rem;
     }
@@ -884,6 +1050,10 @@ const etapes = [
   }
 
   @media (max-width: 40rem) {
+    .hero-actions .btn {
+      width: 100%;
+    }
+
     .probleme-list {
       grid-template-columns: 1fr;
     }

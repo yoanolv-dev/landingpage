@@ -46,20 +46,23 @@ const isActive = (href: string) =>
   <nav class="nav-mobile" id="menu-mobile" aria-label="Navigation mobile" hidden>
     <ul class="list-plain">
       {
-        site.nav.map((item) => (
-          <li>
+        site.nav.map((item, i) => (
+          <li style={`--i: ${i}`}>
             <a
               href={item.href}
               aria-current={isActive(item.href) ? 'page' : undefined}
             >
+              <span class="nav-mobile-no mono" aria-hidden="true">
+                0{i + 1}
+              </span>
               {item.label}
             </a>
           </li>
         ))
       }
-      <li>
-        <a href={site.cta.href} class="nav-mobile-cta" data-track="cta-header">
-          {site.cta.label} →
+      <li class="nav-mobile-action" style={`--i: ${site.nav.length}`}>
+        <a href={site.cta.href} class="btn" data-track="cta-header">
+          {site.cta.label} <span class="arrow" aria-hidden="true">→</span>
         </a>
       </li>
     </ul>
@@ -71,8 +74,9 @@ const isActive = (href: string) =>
     position: sticky;
     top: 0;
     z-index: 50;
-    background: color-mix(in srgb, var(--paper) 92%, transparent);
-    backdrop-filter: blur(8px);
+    background: color-mix(in srgb, var(--paper) 78%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     border-bottom: var(--hairline);
   }
 
@@ -80,15 +84,15 @@ const isActive = (href: string) =>
     display: flex;
     align-items: center;
     gap: var(--space-6);
-    min-height: 4rem;
+    min-height: 4.25rem;
   }
 
   .brand {
-    font-family: var(--font-serif);
-    font-size: 1.35rem;
-    font-weight: 600;
-    font-variation-settings: 'opsz' 60;
-    letter-spacing: -0.01em;
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 750;
+    letter-spacing: -0.03em;
+    font-variation-settings: 'opsz' 96;
     text-decoration: none;
     margin-right: auto;
   }
@@ -97,40 +101,66 @@ const isActive = (href: string) =>
     color: var(--ink);
   }
 
+  .brand .asterisk {
+    display: inline-block;
+    margin-left: 0.06em;
+    text-shadow: 0 0 14px rgb(255 74 31 / 0.8);
+  }
+
   .nav-desktop ul {
     display: flex;
-    gap: var(--space-6);
+    gap: var(--space-8);
   }
 
   .nav-desktop a {
+    position: relative;
     text-decoration: none;
     font-size: var(--text-sm);
-    font-weight: 480;
+    font-weight: 560;
+    color: var(--ink-soft);
     padding-block: var(--space-2);
+    transition: color var(--speed) var(--ease);
+  }
+
+  .nav-desktop a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -0.15rem;
+    width: 100%;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--vermillon);
+    box-shadow: 0 0 10px rgb(255 74 31 / 0.7);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--speed) var(--ease);
   }
 
   .nav-desktop a:hover,
   .nav-desktop a[aria-current='page'] {
-    color: var(--vermillon-ink);
-    text-decoration: underline;
-    text-decoration-color: var(--vermillon);
-    text-underline-offset: 0.4em;
+    color: var(--ink);
+  }
+
+  .nav-desktop a:hover::after,
+  .nav-desktop a[aria-current='page']::after {
+    transform: scaleX(1);
   }
 
   .btn--header {
     font-size: var(--text-sm);
-    padding: 0.6em 1.1em;
+    padding: 0.65em 1.3em;
   }
 
   .menu-toggle {
     display: none;
     background: none;
-    border: 1px solid var(--ink);
-    border-radius: var(--radius);
-    padding: 0.45em 0.9em;
+    border: 1px solid color-mix(in srgb, var(--ink) 35%, transparent);
+    border-radius: var(--radius-pill);
+    padding: 0.5em 1em;
     font-family: var(--font-mono);
     font-size: var(--text-xs);
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--ink);
     cursor: pointer;
@@ -138,34 +168,58 @@ const isActive = (href: string) =>
 
   .menu-toggle[aria-expanded='true'] .menu-toggle-label::after {
     content: ' ✕';
+    color: var(--vermillon-ink);
   }
 
   .nav-mobile {
     display: none;
     border-top: var(--hairline);
     background: var(--paper);
+    min-height: calc(100dvh - 4.25rem);
   }
 
   .nav-mobile ul {
     display: grid;
-    padding: var(--space-4) var(--gutter) var(--space-8);
+    padding: var(--space-6) var(--gutter) var(--space-12);
   }
 
-  .nav-mobile a {
-    display: block;
-    padding: var(--space-4) 0;
-    font-size: var(--text-lg);
+  .nav-mobile a:not(.btn) {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-4);
+    padding: var(--space-6) 0;
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    letter-spacing: -0.02em;
     text-decoration: none;
     border-bottom: var(--hairline);
   }
 
-  .nav-mobile a[aria-current='page'] {
+  .nav-mobile-no {
+    font-size: var(--text-xs);
+    color: var(--vermillon-ink);
+    letter-spacing: 0.14em;
+  }
+
+  .nav-mobile a[aria-current='page']:not(.btn) {
     color: var(--vermillon-ink);
   }
 
-  .nav-mobile-cta {
-    font-weight: 600;
-    color: var(--vermillon-ink);
+  .nav-mobile-action {
+    margin-top: var(--space-8);
+  }
+
+  .nav-mobile-action .btn {
+    width: 100%;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .nav-mobile:not([hidden]) li {
+      opacity: 0;
+      translate: 0 14px;
+      animation: rise 420ms var(--ease) forwards;
+      animation-delay: calc(var(--i, 0) * 60ms);
+    }
   }
 
   @media (max-width: 56rem) {
@@ -191,5 +245,6 @@ const isActive = (href: string) =>
     const open = toggle.getAttribute('aria-expanded') === 'true';
     toggle.setAttribute('aria-expanded', String(!open));
     if (menu) menu.hidden = open;
+    document.documentElement.style.overflow = open ? '' : 'hidden';
   });
 </script>

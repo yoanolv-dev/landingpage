@@ -1,28 +1,25 @@
 /* ============================================================
-   VERMILLON — Système de design
-   Concept : « le document de travail » — papier, encre, vermillon.
-   Une seule famille de caractères (Fraunces) + une mono système.
+   VERMILLON — Système de design « SIGNAL »
+   Concept : dans le bruit des pages identiques (la nuit),
+   votre page est le signal (le faisceau vermillon).
+   Canvas nuit d'encre, grotesque monumentale (Bricolage),
+   accent vermillon électrique, CTA incandescents.
+
+   NOTE sur les tokens : les noms historiques sont conservés
+   comme API sémantique (fond / premier plan), leurs valeurs
+   ont été inversées pour le système sombre :
+   --paper  = fond (nuit)      --ink     = premier plan (clair)
+   --on-ink = texte sur bande  --band--ink = bande CLAIRE
    ============================================================ */
 
-/* ---------- Polices ---------- */
+/* ---------- Police ---------- */
 
 @font-face {
-  font-family: 'Fraunces';
+  font-family: 'Bricolage';
   font-style: normal;
-  font-weight: 300 700;
+  font-weight: 200 800;
   font-display: swap;
-  src: url('/fonts/fraunces-var.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
-@font-face {
-  font-family: 'Fraunces';
-  font-style: italic;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url('/fonts/fraunces-italic-var.woff2') format('woff2');
+  src: url('/fonts/bricolage-var.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
     U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
     U+2212, U+2215, U+FEFF, U+FFFD;
@@ -31,36 +28,36 @@
 /* ---------- Tokens ---------- */
 
 :root {
-  /* Encres & papiers */
-  --paper: #f7f3ea;
-  --paper-deep: #efe9da;
-  --paper-line: #ddd5c2;
-  --ink: #1a1713;
-  --ink-soft: #57503f;
-  --ink-faint: #857d69;
-  --vermillon: #e24a1b; /* graphique : filets, marques, grands titres */
-  --vermillon-ink: #a5350f; /* texte courant : contraste 6:1 sur papier */
+  /* Nuit & lumière */
+  --paper: #0c0b09; /* fond : la nuit d'encre */
+  --paper-deep: #16130f; /* surfaces relevées */
+  --paper-line: rgb(244 241 234 / 0.12); /* lignes */
+  --ink: #f4f1ea; /* premier plan : la lumière */
+  --ink-soft: #c4bcae; /* 10.4:1 */
+  --ink-faint: #978f81; /* 6.1:1 */
+  --vermillon: #ff4a1f; /* le signal — graphique & CTA */
+  --vermillon-ink: #ff6b3d; /* accent texte sur fond nuit : 6.9:1 */
 
-  /* Sur fond encre */
-  --on-ink: #ece6d6;
-  --on-ink-soft: #b8b0a0;
-  --on-ink-accent: #f06b3e;
+  /* Bande claire (zone de conversion, footer) */
+  --on-ink: #171310;
+  --on-ink-soft: #57503f;
+  --on-ink-accent: #a5350f; /* 5.9:1 sur clair */
 
   /* Typographie */
-  --font-serif: 'Fraunces', 'Iowan Old Style', 'Palatino Linotype', Palatino,
-    Georgia, serif;
+  --font-display: 'Bricolage', 'Archivo', 'Segoe UI', system-ui, sans-serif;
+  --font-serif: var(--font-display); /* alias de compatibilité */
   --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', 'JetBrains Mono',
     Menlo, Consolas, monospace;
 
-  /* Échelle fluide */
+  /* Échelle fluide — voix monumentale */
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: clamp(1rem, 0.96rem + 0.22vw, 1.125rem);
-  --text-lg: clamp(1.125rem, 1.05rem + 0.4vw, 1.35rem);
-  --text-xl: clamp(1.35rem, 1.2rem + 0.75vw, 1.75rem);
-  --text-2xl: clamp(1.7rem, 1.4rem + 1.4vw, 2.5rem);
-  --text-3xl: clamp(2.1rem, 1.6rem + 2.6vw, 3.6rem);
-  --text-display: clamp(2.5rem, 1.7rem + 4.2vw, 5rem);
+  --text-lg: clamp(1.1rem, 1.02rem + 0.42vw, 1.35rem);
+  --text-xl: clamp(1.35rem, 1.18rem + 0.85vw, 1.9rem);
+  --text-2xl: clamp(1.8rem, 1.4rem + 1.9vw, 2.9rem);
+  --text-3xl: clamp(2.2rem, 1.6rem + 3vw, 4rem);
+  --text-display: clamp(2.6rem, 1.5rem + 4.1vw, 4.9rem);
 
   /* Espacements */
   --space-1: 0.25rem;
@@ -72,18 +69,20 @@
   --space-12: 3rem;
   --space-16: 4rem;
   --space-24: 6rem;
-  --section: clamp(4rem, 3rem + 5vw, 8rem);
+  --section: clamp(4.5rem, 3rem + 6vw, 9rem);
 
   /* Gabarit */
-  --container: 76rem;
+  --container: 80rem;
   --gutter: clamp(1.25rem, 4vw, 3rem);
-  --measure: 42rem; /* largeur de lecture */
+  --measure: 42rem;
 
-  /* Divers */
+  /* Matière & mouvement */
   --hairline: 1px solid var(--paper-line);
-  --radius: 2px;
-  --speed: 220ms;
-  --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --radius: 10px;
+  --radius-pill: 999px;
+  --speed: 240ms;
+  --ease: cubic-bezier(0.32, 0.08, 0.24, 1);
+  --glow: 0 0 24px rgb(255 74 31 / 0.35), 0 0 64px rgb(255 74 31 / 0.18);
 }
 
 /* ---------- Base ---------- */
@@ -108,21 +107,21 @@ html {
 body {
   margin: 0;
   background-color: var(--paper);
-  /* grain de papier léger, généré en SVG inline (≈300 octets) */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.09 0 0 0 0 0.07 0 0 0 0.035 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* grain de nuit — bruit lumineux très léger (SVG inline ≈300 octets) */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 0.95 0 0 0 0 0.88 0 0 0 0.03 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
   color: var(--ink);
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: var(--text-base);
-  font-weight: 380;
-  line-height: 1.65;
-  font-variation-settings: 'opsz' 12;
+  font-weight: 400;
+  line-height: 1.62;
+  font-variation-settings: 'opsz' 14;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
   background: var(--vermillon);
-  color: var(--paper);
+  color: #140c08;
 }
 
 img,
@@ -139,18 +138,18 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: var(--font-serif);
-  font-weight: 560;
-  line-height: 1.08;
-  letter-spacing: -0.015em;
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.028em;
   margin: 0 0 var(--space-6);
   text-wrap: balance;
-  font-variation-settings: 'opsz' 100;
+  font-variation-settings: 'opsz' 96;
 }
 
 h1 {
   font-size: var(--text-display);
-  font-weight: 480;
+  font-weight: 750;
 }
 
 h2 {
@@ -159,7 +158,8 @@ h2 {
 
 h3 {
   font-size: var(--text-xl);
-  font-variation-settings: 'opsz' 40;
+  letter-spacing: -0.015em;
+  font-variation-settings: 'opsz' 48;
 }
 
 h4 {
@@ -173,19 +173,20 @@ p {
 }
 
 strong {
-  font-weight: 620;
+  font-weight: 650;
+  color: var(--ink);
 }
 
-em {
-  font-variation-settings: 'opsz' 14;
+.band--ink strong {
+  color: inherit;
 }
 
 a {
   color: inherit;
   text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, var(--vermillon) 55%, transparent);
+  text-decoration-color: color-mix(in srgb, var(--vermillon) 60%, transparent);
   text-decoration-thickness: 1px;
-  text-underline-offset: 0.2em;
+  text-underline-offset: 0.22em;
   transition: text-decoration-color var(--speed) var(--ease), color var(--speed) var(--ease);
 }
 
@@ -197,18 +198,18 @@ a:hover {
 :focus-visible {
   outline: 2px solid var(--vermillon);
   outline-offset: 3px;
-  border-radius: var(--radius);
+  border-radius: 4px;
 }
 
-/* Étiquette mono — repère de rubrique */
+/* Étiquette technique — repère de rubrique, façon relevé d'instrument */
 .kicker {
   display: inline-flex;
-  align-items: baseline;
-  gap: 0.6em;
+  align-items: center;
+  gap: 0.7em;
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   font-weight: 500;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--vermillon-ink);
   margin-bottom: var(--space-4);
@@ -216,17 +217,22 @@ a:hover {
 
 .kicker::before {
   content: '';
-  inline-size: 1.6rem;
-  block-size: 1px;
+  inline-size: 1.75rem;
+  block-size: 2px;
+  border-radius: 2px;
   background: var(--vermillon);
-  align-self: center;
+  box-shadow: 0 0 12px rgb(255 74 31 / 0.8);
+}
+
+.band--ink .kicker::before {
+  box-shadow: none;
 }
 
 .lede {
   font-size: var(--text-lg);
   line-height: 1.55;
   color: var(--ink-soft);
-  font-weight: 360;
+  font-weight: 380;
   max-width: var(--measure);
 }
 
@@ -257,28 +263,33 @@ small {
   border-top: var(--hairline);
 }
 
-/* En-tête de section éditorial : numéro + titre alignés sur filet */
 .section-head {
   display: grid;
   gap: var(--space-2);
-  margin-bottom: clamp(2rem, 5vw, 4rem);
+  margin-bottom: clamp(2rem, 5vw, 4.5rem);
 }
 
 .section-no {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   color: var(--ink-faint);
 }
 
-/* Bande sombre — rythme éditorial */
+.section-no::before {
+  content: '/ ';
+  color: var(--vermillon);
+}
+
+/* Bande claire — la zone où la nuit s'inverse (conversion, footer) */
 .band--ink {
   background-color: var(--ink);
+  background-image: none;
   color: var(--on-ink);
 }
 
 .band--ink ::selection {
-  background: var(--on-ink-accent);
+  background: var(--on-ink);
   color: var(--ink);
 }
 
@@ -296,6 +307,11 @@ small {
   color: var(--on-ink-accent);
 }
 
+.band--ink .section-no {
+  color: var(--on-ink-soft);
+}
+
+/* Surface relevée */
 .band--paper-deep {
   background-color: var(--paper-deep);
 }
@@ -305,58 +321,61 @@ small {
 .btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.6em;
-  padding: 0.85em 1.5em;
-  font-family: var(--font-serif);
+  padding: 0.9em 1.7em;
+  font-family: var(--font-display);
   font-size: var(--text-base);
-  font-weight: 520;
-  line-height: 1.2;
+  font-weight: 640;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
   text-decoration: none;
-  border: 1px solid var(--ink);
-  border-radius: var(--radius);
-  background: var(--ink);
-  color: var(--paper);
+  border: 1px solid var(--vermillon);
+  border-radius: var(--radius-pill);
+  background: linear-gradient(140deg, #ff5c2b, var(--vermillon) 55%, #e83c12);
+  color: #140c08;
   cursor: pointer;
-  transition: background var(--speed) var(--ease), color var(--speed) var(--ease),
-    border-color var(--speed) var(--ease), translate var(--speed) var(--ease);
+  box-shadow: var(--glow);
+  transition: box-shadow var(--speed) var(--ease), translate var(--speed) var(--ease),
+    filter var(--speed) var(--ease), background var(--speed) var(--ease),
+    color var(--speed) var(--ease), border-color var(--speed) var(--ease);
 }
 
 .btn:hover {
-  background: var(--vermillon);
-  border-color: var(--vermillon);
-  color: #fff;
+  color: #140c08;
+  filter: brightness(1.12);
+  translate: 0 -2px;
+  box-shadow: 0 0 32px rgb(255 74 31 / 0.5), 0 0 90px rgb(255 74 31 / 0.25);
 }
 
 .btn:active {
-  translate: 0 1px;
+  translate: 0 0;
+  filter: brightness(0.98);
 }
 
 .btn--ghost {
   background: transparent;
+  border-color: color-mix(in srgb, var(--ink) 35%, transparent);
   color: var(--ink);
+  box-shadow: none;
 }
 
 .btn--ghost:hover {
   background: transparent;
+  filter: none;
   color: var(--vermillon-ink);
   border-color: var(--vermillon);
-}
-
-.band--ink .btn {
-  background: var(--on-ink);
-  border-color: var(--on-ink);
-  color: var(--ink);
-}
-
-.band--ink .btn:hover {
-  background: var(--on-ink-accent);
-  border-color: var(--on-ink-accent);
-  color: var(--ink);
+  box-shadow: 0 0 20px rgb(255 74 31 / 0.15);
 }
 
 .band--ink .btn--ghost {
-  background: transparent;
+  border-color: color-mix(in srgb, var(--on-ink) 40%, transparent);
   color: var(--on-ink);
+}
+
+.band--ink .btn--ghost:hover {
+  color: var(--on-ink-accent);
+  border-color: var(--vermillon);
 }
 
 .btn .arrow {
@@ -364,10 +383,9 @@ small {
 }
 
 .btn:hover .arrow {
-  translate: 3px 0;
+  translate: 4px 0;
 }
 
-/* Note d'action — microcopie sous un bouton */
 .btn-note {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
@@ -380,7 +398,7 @@ small {
   color: var(--on-ink-soft);
 }
 
-/* ---------- Listes éditoriales ---------- */
+/* ---------- Listes ---------- */
 
 .list-plain {
   list-style: none;
@@ -390,34 +408,28 @@ small {
 
 /* ---------- Annotations (mode coulisses) ---------- */
 
-/*
-  Le calque d'annotations est inerte par défaut.
-  data-backstage="true" sur <html> le révèle :
-  chaque .annotation devient visible, le gabarit s'esquisse.
-*/
-
 .annotation {
   display: none;
   position: relative;
   max-width: 17rem;
   padding: var(--space-3) var(--space-4);
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: var(--text-sm);
-  line-height: 1.5;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 1.55;
+  letter-spacing: 0.01em;
   color: var(--vermillon-ink);
-  background: color-mix(in srgb, var(--vermillon) 7%, var(--paper));
+  background: color-mix(in srgb, var(--vermillon) 10%, var(--paper));
+  border: 1px solid color-mix(in srgb, var(--vermillon) 35%, transparent);
   border-left: 2px solid var(--vermillon);
+  border-radius: var(--radius);
   margin-block: var(--space-4);
 }
 
 .annotation::before {
   content: '✳ note de conception';
   display: block;
-  font-family: var(--font-mono);
-  font-style: normal;
   font-size: 0.65rem;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   margin-bottom: var(--space-2);
   color: var(--vermillon);
@@ -444,8 +456,7 @@ small {
   }
 }
 
-/* Marges annotées : sur écran large, les notes se placent dans la marge */
-@media (min-width: 72rem) {
+@media (min-width: 78rem) {
   .annotated {
     position: relative;
   }
@@ -458,7 +469,6 @@ small {
   }
 }
 
-/* Esquisse du gabarit en mode coulisses */
 [data-backstage='true'] .section {
   position: relative;
 }
@@ -467,14 +477,14 @@ small {
   content: '';
   position: absolute;
   inset: 0.5rem;
-  border: 1px dashed color-mix(in srgb, var(--vermillon) 35%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--vermillon) 40%, transparent);
+  border-radius: var(--radius);
   pointer-events: none;
 }
 
-/* ---------- Révélations au défilement ---------- */
+/* ---------- Mouvements ---------- */
 
-/* Les révélations ne masquent le contenu que si JavaScript est actif
-   (classe .js posée dans <head>) ET que le mouvement est accepté. */
+/* Révélations au défilement — jamais de contenu masqué sans JS */
 .reveal {
   opacity: 1;
 }
@@ -482,14 +492,88 @@ small {
 @media (prefers-reduced-motion: no-preference) {
   .js .reveal {
     opacity: 0;
-    translate: 0 18px;
-    transition: opacity 600ms var(--ease), translate 600ms var(--ease);
+    translate: 0 22px;
+    transition: opacity 650ms var(--ease), translate 650ms var(--ease);
   }
 
   .js .reveal.is-visible {
     opacity: 1;
     translate: 0 0;
   }
+
+  /* Entrée séquencée du hero — CSS pur, gouvernée par --stagger */
+  .js [data-stagger] {
+    opacity: 0;
+    translate: 0 26px;
+    animation: rise 750ms var(--ease) forwards;
+    animation-delay: calc(var(--stagger, 0) * 110ms);
+  }
+
+  @keyframes rise {
+    to {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+}
+
+/* Bandeau défilant — le signal circule */
+.marquee {
+  overflow: hidden;
+  border-block: var(--hairline);
+  padding-block: var(--space-4);
+  user-select: none;
+}
+
+.marquee-track {
+  display: flex;
+  gap: var(--space-8);
+  width: max-content;
+}
+
+.marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 620;
+  letter-spacing: -0.01em;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.marquee-item .asterisk {
+  font-size: 0.85em;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .marquee-track {
+    animation: marquee 32s linear infinite;
+  }
+
+  .marquee:hover .marquee-track {
+    animation-play-state: paused;
+  }
+
+  @keyframes marquee {
+    to {
+      translate: -50% 0;
+    }
+  }
+}
+
+/* Barre de progression de lecture */
+.progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: var(--vermillon);
+  box-shadow: 0 0 10px rgb(255 74 31 / 0.7);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  z-index: 90;
+  pointer-events: none;
 }
 
 /* ---------- Formulaires ---------- */
@@ -501,7 +585,7 @@ small {
 }
 
 .field label {
-  font-weight: 520;
+  font-weight: 600;
   font-size: var(--text-base);
 }
 
@@ -516,20 +600,27 @@ small {
 .field textarea {
   font: inherit;
   color: var(--ink);
-  background: #fff;
+  background: var(--paper-deep);
   border: 1px solid var(--paper-line);
   border-radius: var(--radius);
-  padding: 0.7em 0.9em;
+  padding: 0.75em 1em;
   width: 100%;
-  transition: border-color var(--speed) var(--ease);
+  transition: border-color var(--speed) var(--ease), box-shadow var(--speed) var(--ease);
+}
+
+.field select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23978f81' stroke-width='2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1em center;
 }
 
 .field input:focus,
 .field select:focus,
 .field textarea:focus {
-  outline: 2px solid var(--vermillon);
-  outline-offset: 1px;
+  outline: none;
   border-color: var(--vermillon);
+  box-shadow: 0 0 0 1px var(--vermillon), 0 0 18px rgb(255 74 31 / 0.2);
 }
 
 .field textarea {
@@ -552,6 +643,8 @@ small {
 .table-wrap {
   overflow-x: auto;
   margin-block: var(--space-8);
+  border: var(--hairline);
+  border-radius: var(--radius);
 }
 
 table {
@@ -563,21 +656,30 @@ table {
 th,
 td {
   text-align: left;
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-4);
   border-bottom: var(--hairline);
   vertical-align: top;
+}
+
+tbody tr:last-child th,
+tbody tr:last-child td {
+  border-bottom: 0;
 }
 
 th {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--ink-soft);
   font-weight: 500;
 }
 
-/* ---------- Prose (articles du guide) ---------- */
+thead th {
+  background: var(--paper-deep);
+}
+
+/* ---------- Prose (articles) ---------- */
 
 .prose {
   max-width: var(--measure);
@@ -611,7 +713,6 @@ th {
   margin: var(--space-8) 0;
   padding: var(--space-4) var(--space-6);
   border-left: 2px solid var(--vermillon);
-  font-style: italic;
   color: var(--ink-soft);
 }
 
@@ -630,16 +731,16 @@ th {
   font-size: 0.85em;
   background: var(--paper-deep);
   padding: 0.1em 0.35em;
-  border-radius: var(--radius);
+  border-radius: 4px;
 }
 
-/* Encadré « réponse directe » — définition synthétique en tête d'article */
 .prose .answer,
 .answer {
   max-width: var(--measure);
   background: var(--paper-deep);
   border: var(--hairline);
   border-left: 2px solid var(--vermillon);
+  border-radius: var(--radius);
   padding: var(--space-6);
   margin-block: var(--space-8);
   font-size: var(--text-base);
@@ -668,27 +769,34 @@ th {
   left: var(--space-4);
   top: -100%;
   z-index: 100;
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--vermillon);
+  color: #140c08;
   padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   text-decoration: none;
+  font-weight: 640;
 }
 
 .skip-link:focus {
   top: var(--space-4);
 }
 
-/* Astérisque signature */
 .asterisk {
   color: var(--vermillon);
   font-style: normal;
 }
 
 @media print {
+  body {
+    background: #fff;
+    color: #111;
+  }
+
   .site-header,
   .site-footer,
   .backstage-toggle,
+  .progress,
+  .sticky-cta,
   .no-print {
     display: none !important;
   }
