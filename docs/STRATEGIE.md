@@ -40,29 +40,31 @@ sans diluer le discours.
 
 ## 3. Direction artistique
 
-**Concept : « Signal »** — dans le bruit des pages identiques (la nuit
-d'encre), votre page est le signal (le faisceau vermillon).
+**Concept : « La chambre noire »** — sombre et sobre, la retenue comme
+luxe. Comme dans une chambre noire, tout est construit pour révéler une
+seule chose : l'offre du visiteur.
 
-- Palette : nuit d'encre `#0C0B09`, surfaces `#16130F`, lumière `#F4F1EA`,
-  vermillon électrique `#FF4A1F` (graphique/CTA) / `#FF6B3D` (texte accent,
-  6.9:1). Bandes claires inversées pour les zones de conversion (CtaBand,
-  footer) et la section « Pour qui ». Tokens dans `src/styles/global.css`
-  (noms historiques conservés comme API : `--paper` = fond, `--ink` =
-  premier plan).
-- Typographie : une seule famille, **Bricolage Grotesque variable**
-  (auto-hébergée, ~77 Ko), du display monumental (750) au corps de texte ;
-  mono système pour les étiquettes techniques façon relevé d'instrument.
-- Système : halos réservés aux éléments de conversion (CTA incandescents),
-  faisceau lumineux des kickers, cartouche « fiche de mission », astérisque
-  signature ✳ (ambiant en rotation lente dans le hero), bandeau défilant,
-  barre de progression de lecture, entrée séquencée du hero (CSS pur).
+- Palette : noir neutre profond `#0B0B0C`, surfaces `#131316`, blanc
+  argentique `#EDEEF0`, un seul accent froid `#7FB2CC` (graphique) /
+  `#A8CCE0` (texte accent, 11.6:1). Bandes argent inversées pour les zones
+  de conversion (CtaBand, footer) et la section « Pour qui ». Tokens dans
+  `src/styles/global.css` (noms historiques conservés comme API :
+  `--paper` = fond, `--ink` = premier plan, `--vermillon` = accent).
+- Typographie : deux voix — **Instrument Serif** (h1/h2, marque en
+  italique : la voix éditoriale) et **Instrument Sans variable** (texte,
+  interface) ; mono système pour les étiquettes. Trois fichiers
+  auto-hébergés, ~73 Ko en tout.
+- Système : filets d'un pixel, anneaux concentriques du hero (signature
+  graphique, statique), cartouche « fiche de mission », astérisque ✳,
+  entrée séquencée du hero (CSS pur), zéro dégradé, zéro halo, zéro
+  animation décorative.
 - **Signature interactive : le mode coulisses** — un calque d'annotations
-  lumineuses révèle les décisions de conception à même la page.
-- Motion : tout est gouverné par `prefers-reduced-motion` et par la classe
-  `.js` (aucun contenu masqué sans JavaScript).
-- Anti-modèles bannis : dégradés violets, glassmorphism, bento grids,
-  mockups génériques, animations de texte à la mode. Le noir n'est pas un
-  fond par défaut : il est le concept (le bruit) que le vermillon perce.
+  révèle les décisions de conception à même la page.
+- Motion : uniquement fonctionnel et discret, gouverné par
+  `prefers-reduced-motion` et par la classe `.js` (aucun contenu masqué
+  sans JavaScript). CTA collant sur mobile.
+- Anti-modèles bannis : dégradés violets, glassmorphism, halos lumineux,
+  bandeaux défilants, compteurs animés, bento grids, mockups génériques.
 
 ## 4. Parcours de conversion
 

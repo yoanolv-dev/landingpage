@@ -133,8 +133,27 @@ const etapes = [
 <Base title={title} description={description} jsonLd={jsonLd} brandInTitle={false}>
   <!-- ============ HERO ============ -->
   <section class="hero annotated" aria-label="Introduction">
-    <div class="hero-glow" aria-hidden="true"></div>
-    <span class="hero-asterisk" aria-hidden="true">✳</span>
+    <!-- Anneaux de développement — signature graphique, 1 px, statique -->
+    <svg
+      class="hero-rings"
+      aria-hidden="true"
+      viewBox="0 0 800 800"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {
+        [390, 330, 272, 216, 162, 110].map((r, i) => (
+          <circle
+            cx="400"
+            cy="400"
+            r={r}
+            stroke="currentColor"
+            stroke-width="1"
+            opacity={0.05 + i * 0.012}
+          />
+        ))
+      }
+    </svg>
     <div class="container hero-grid">
       <div class="hero-main">
         <p class="kicker" data-stagger style="--stagger: 0">
@@ -185,27 +204,6 @@ const etapes = [
       </Annotation>
     </div>
   </section>
-
-  <!-- ============ BANDEAU SIGNAL ============ -->
-  <div class="marquee" aria-hidden="true">
-    <div class="marquee-track">
-      {
-        [0, 1].map(() => (
-          <span class="marquee-item">
-            Stratégie <span class="asterisk">✳</span> Copywriting
-            <span class="asterisk">✳</span> Direction artistique
-            <span class="asterisk">✳</span> Développement
-            <span class="asterisk">✳</span> SEO
-            <span class="asterisk">✳</span> Mesure
-            <span class="asterisk">✳</span>
-          </span>
-        ))
-      }
-    </div>
-  </div>
-  <p class="sr-only">
-    Stratégie, copywriting, direction artistique, développement, SEO, mesure.
-  </p>
 
   <!-- ============ SOMMAIRE ============ -->
   <nav class="sommaire annotated" aria-label="Sommaire de la page">
@@ -551,44 +549,23 @@ const etapes = [
 
 
 <style>
-  /* ---------- Hero — le signal s'allume ---------- */
+  /* ---------- Hero — la révélation ---------- */
   .hero {
     position: relative;
     overflow: clip;
     padding-block: clamp(3.5rem, 2.5rem + 5vw, 7rem) clamp(3rem, 2rem + 4vw, 5.5rem);
   }
 
-  .hero-glow {
+  .hero-rings {
     position: absolute;
-    inset: -15% -10% auto -10%;
-    height: 46rem;
-    background:
-      radial-gradient(40rem 26rem at 16% 28%, rgb(255 74 31 / 0.14), transparent 65%),
-      radial-gradient(30rem 24rem at 88% 4%, rgb(255 74 31 / 0.07), transparent 60%);
-    pointer-events: none;
-  }
-
-  .hero-asterisk {
-    position: absolute;
-    top: -8rem;
-    right: -7rem;
-    font-size: clamp(18rem, 32vw, 36rem);
-    line-height: 1;
-    color: rgb(255 74 31 / 0.08);
+    top: 50%;
+    right: -14rem;
+    translate: 0 -50%;
+    width: clamp(30rem, 46vw, 50rem);
+    height: auto;
+    color: var(--ink);
     pointer-events: none;
     user-select: none;
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .hero-asterisk {
-      animation: hero-spin 110s linear infinite;
-    }
-
-    @keyframes hero-spin {
-      to {
-        rotate: 360deg;
-      }
-    }
   }
 
   .hero-grid {
@@ -603,18 +580,12 @@ const etapes = [
     margin-bottom: var(--space-8);
   }
 
-  .hero h1 em {
-    font-style: normal;
-    color: var(--vermillon-ink);
-    text-shadow: 0 0 22px rgb(255 74 31 / 0.28);
-  }
-
   .footnote-call {
     font-size: 0.4em;
     vertical-align: super;
     text-decoration: none;
     color: var(--vermillon);
-    margin-left: 0.15em;
+    margin-left: 0.12em;
   }
 
   .hero-actions {
@@ -624,33 +595,25 @@ const etapes = [
     margin-top: var(--space-8);
   }
 
-  /* Cartouche — fiche de mission façon relevé d'instrument */
+  /* Cartouche — fiche de mission, gravure minimale */
   .cartouche {
     position: relative;
     border: var(--hairline);
     border-radius: var(--radius);
-    background: color-mix(in srgb, var(--paper-deep) 85%, transparent);
-    backdrop-filter: blur(8px);
+    background: color-mix(in srgb, var(--paper-deep) 88%, transparent);
+    backdrop-filter: blur(6px);
     padding: var(--space-6);
     font-size: var(--text-sm);
   }
 
-  .cartouche::before {
-    content: '';
-    position: absolute;
-    inset: 0 auto 0 0;
-    width: 2px;
-    border-radius: 2px;
-    background: linear-gradient(var(--vermillon), transparent 85%);
-    box-shadow: 0 0 14px rgb(255 74 31 / 0.5);
-  }
-
   .cartouche-titre {
     font-size: var(--text-xs);
-    letter-spacing: 0.16em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--ink-faint);
     margin: 0 0 var(--space-4);
+    padding-bottom: var(--space-3);
+    border-bottom: var(--hairline);
   }
 
   .cartouche dl {
@@ -670,12 +633,12 @@ const etapes = [
 
   .cartouche dd {
     margin: 0;
-    font-weight: 560;
+    font-weight: 520;
   }
 
   /* ---------- Sommaire ---------- */
   .sommaire {
-    border-bottom: var(--hairline);
+    border-block: var(--hairline);
     background: var(--paper);
   }
 
@@ -706,7 +669,7 @@ const etapes = [
   }
 
   .sommaire-label {
-    font-weight: 680;
+    font-weight: 620;
     letter-spacing: -0.01em;
     transition: color var(--speed) var(--ease);
   }
@@ -751,7 +714,7 @@ const etapes = [
     padding: var(--space-4) var(--space-6);
     border-left: 2px solid var(--vermillon);
     border-radius: 0 var(--radius) var(--radius) 0;
-    background: color-mix(in srgb, var(--vermillon) 9%, transparent);
+    background: color-mix(in srgb, var(--vermillon) 7%, transparent);
   }
 
   /* ---------- 03 Méthode ---------- */
@@ -777,7 +740,6 @@ const etapes = [
     font-family: var(--font-mono);
     font-size: var(--text-lg);
     color: var(--vermillon);
-    text-shadow: 0 0 16px rgb(255 74 31 / 0.5);
   }
 
   .etape h3 {
@@ -890,7 +852,7 @@ const etapes = [
     color: var(--ink-soft);
   }
 
-  /* ---------- Pour qui (bande claire) ---------- */
+  /* ---------- Pour qui (bande argent) ---------- */
   .situations {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -898,9 +860,9 @@ const etapes = [
   }
 
   .situation-cas {
+    font-family: var(--font-serif);
     font-size: var(--text-xl);
-    font-weight: 700;
-    letter-spacing: -0.015em;
+    font-weight: 400;
     line-height: 1.12;
     margin-bottom: var(--space-2);
     text-wrap: balance;
@@ -933,9 +895,9 @@ const etapes = [
 
   .preuve:hover {
     color: inherit;
-    border-color: color-mix(in srgb, var(--vermillon) 55%, transparent);
-    translate: 0 -4px;
-    box-shadow: 0 12px 40px rgb(0 0 0 / 0.4), 0 0 24px rgb(255 74 31 / 0.12);
+    border-color: color-mix(in srgb, var(--vermillon) 50%, transparent);
+    translate: 0 -3px;
+    box-shadow: 0 14px 40px rgb(0 0 0 / 0.35);
   }
 
   .preuve h3 {
@@ -968,7 +930,7 @@ const etapes = [
     z-index: 55;
     padding: var(--space-3) var(--gutter)
       calc(var(--space-3) + env(safe-area-inset-bottom));
-    background: color-mix(in srgb, var(--paper) 80%, transparent);
+    background: color-mix(in srgb, var(--paper) 84%, transparent);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border-top: var(--hairline);
@@ -1028,10 +990,9 @@ const etapes = [
       gap: var(--space-8);
     }
 
-    .hero-asterisk {
-      top: -4rem;
-      right: -6rem;
-      font-size: 18rem;
+    .hero-rings {
+      right: -18rem;
+      width: 34rem;
     }
 
     .cartouche {

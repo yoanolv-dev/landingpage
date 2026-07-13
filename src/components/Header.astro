@@ -74,7 +74,7 @@ const isActive = (href: string) =>
     position: sticky;
     top: 0;
     z-index: 50;
-    background: color-mix(in srgb, var(--paper) 78%, transparent);
+    background: color-mix(in srgb, var(--paper) 82%, transparent);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border-bottom: var(--hairline);
@@ -88,13 +88,14 @@ const isActive = (href: string) =>
   }
 
   .brand {
-    font-family: var(--font-display);
-    font-size: 1.4rem;
-    font-weight: 750;
-    letter-spacing: -0.03em;
-    font-variation-settings: 'opsz' 96;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.55rem;
+    font-weight: 400;
+    letter-spacing: 0;
     text-decoration: none;
     margin-right: auto;
+    line-height: 1;
   }
 
   .brand:hover {
@@ -103,8 +104,8 @@ const isActive = (href: string) =>
 
   .brand .asterisk {
     display: inline-block;
-    margin-left: 0.06em;
-    text-shadow: 0 0 14px rgb(255 74 31 / 0.8);
+    margin-left: 0.08em;
+    font-size: 0.8em;
   }
 
   .nav-desktop ul {
@@ -116,7 +117,7 @@ const isActive = (href: string) =>
     position: relative;
     text-decoration: none;
     font-size: var(--text-sm);
-    font-weight: 560;
+    font-weight: 520;
     color: var(--ink-soft);
     padding-block: var(--space-2);
     transition: color var(--speed) var(--ease);
@@ -126,12 +127,10 @@ const isActive = (href: string) =>
     content: '';
     position: absolute;
     left: 0;
-    bottom: -0.15rem;
+    bottom: -0.1rem;
     width: 100%;
-    height: 2px;
-    border-radius: 2px;
+    height: 1px;
     background: var(--vermillon);
-    box-shadow: 0 0 10px rgb(255 74 31 / 0.7);
     transform: scaleX(0);
     transform-origin: left;
     transition: transform var(--speed) var(--ease);
@@ -149,13 +148,13 @@ const isActive = (href: string) =>
 
   .btn--header {
     font-size: var(--text-sm);
-    padding: 0.65em 1.3em;
+    padding: 0.65em 1.35em;
   }
 
   .menu-toggle {
     display: none;
     background: none;
-    border: 1px solid color-mix(in srgb, var(--ink) 35%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ink) 30%, transparent);
     border-radius: var(--radius-pill);
     padding: 0.5em 1em;
     font-family: var(--font-mono);
@@ -188,16 +187,17 @@ const isActive = (href: string) =>
     align-items: baseline;
     gap: var(--space-4);
     padding: var(--space-6) 0;
+    font-family: var(--font-serif);
     font-size: var(--text-2xl);
-    font-weight: 700;
-    letter-spacing: -0.02em;
+    font-weight: 400;
     text-decoration: none;
     border-bottom: var(--hairline);
   }
 
   .nav-mobile-no {
+    font-family: var(--font-mono);
     font-size: var(--text-xs);
-    color: var(--vermillon-ink);
+    color: var(--ink-faint);
     letter-spacing: 0.14em;
   }
 
@@ -216,9 +216,9 @@ const isActive = (href: string) =>
   @media (prefers-reduced-motion: no-preference) {
     .nav-mobile:not([hidden]) li {
       opacity: 0;
-      translate: 0 14px;
-      animation: rise 420ms var(--ease) forwards;
-      animation-delay: calc(var(--i, 0) * 60ms);
+      translate: 0 12px;
+      animation: rise 400ms var(--ease) forwards;
+      animation-delay: calc(var(--i, 0) * 55ms);
     }
   }
 

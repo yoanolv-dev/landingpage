@@ -52,11 +52,18 @@ const analyticsDomain = import.meta.env.PUBLIC_ANALYTICS_DOMAIN;
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <meta name="theme-color" content="#0c0b09" />
+    <meta name="theme-color" content="#0b0b0c" />
 
     <link
       rel="preload"
-      href="/fonts/bricolage-var.woff2"
+      href="/fonts/instrument-serif.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/instrument-sans-var.woff2"
       as="font"
       type="font/woff2"
       crossorigin
@@ -81,7 +88,6 @@ const analyticsDomain = import.meta.env.PUBLIC_ANALYTICS_DOMAIN;
   </head>
   <body>
     <a href="#contenu" class="skip-link">Aller au contenu</a>
-    <div class="progress" id="progress" aria-hidden="true"></div>
     <Header />
     <main id="contenu">
       <slot />
@@ -89,29 +95,6 @@ const analyticsDomain = import.meta.env.PUBLIC_ANALYTICS_DOMAIN;
     <Footer />
 
     <script>
-      // Barre de progression de lecture.
-      const bar = document.getElementById('progress');
-      if (bar) {
-        let ticking = false;
-        const update = () => {
-          const h = document.documentElement;
-          const max = h.scrollHeight - h.clientHeight;
-          bar.style.transform = `scaleX(${max > 0 ? h.scrollTop / max : 0})`;
-          ticking = false;
-        };
-        addEventListener(
-          'scroll',
-          () => {
-            if (!ticking) {
-              ticking = true;
-              requestAnimationFrame(update);
-            }
-          },
-          { passive: true }
-        );
-        update();
-      }
-
       // Révélations au défilement — inertes si reduced-motion.
       const items = document.querySelectorAll('.reveal');
       if (
