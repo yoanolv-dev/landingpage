@@ -1,0 +1,277 @@
+---
+import Base from '@/layouts/Base.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import Faq from '@/components/Faq.astro';
+import { site, formatPriceRange } from '@/config/site';
+import { graph, webPage, breadcrumbs, faqPage } from '@/lib/jsonld';
+
+const title = 'Prix d’une landing page sur mesure : tarifs et facteurs de coût';
+const description =
+  'Combien coûte une landing page ? Fourchettes pratiquées par le studio, facteurs qui font varier le prix, et comparaison honnête des options : template, freelance, agence.';
+
+const crumbs = [
+  { name: 'Accueil', path: '/' },
+  { name: 'Tarifs', path: '/tarifs/' },
+];
+
+const creation = formatPriceRange(site.pricing.creation);
+const refonte = formatPriceRange(site.pricing.refonte);
+const audit = formatPriceRange(site.pricing.audit);
+
+const faqItems = [
+  {
+    q: 'Pourquoi ne pas afficher un prix unique ?',
+    a: `<p>Parce que deux « landing pages » peuvent représenter des volumes de travail sans rapport : une page pour une offre déjà limpide, avec preuves disponibles, n'a rien à voir avec une page qui demande de clarifier le positionnement, produire tout le message et intégrer un outil de prise de rendez-vous. Un prix unique serait soit injuste, soit gonflé par précaution. En revanche, le devis est <strong>fermé</strong> : une fois le périmètre défini, le montant n'évolue pas sans votre accord.</p>`,
+  },
+  {
+    q: 'Le paiement est-il échelonné ?',
+    a: `<p>Oui : un acompte à la commande, le solde à des jalons définis dans le devis (validation de la maquette, mise en ligne). Aucun paiement intégral d'avance n'est demandé.</p>`,
+  },
+  {
+    q: 'Y a-t-il des coûts récurrents ensuite ?',
+    a: `<p>Le strict minimum : votre nom de domaine (environ 10 à 15 € par an) et l'hébergement — souvent gratuit ou quelques euros par mois pour une page statique performante. Aucun abonnement obligatoire au studio, aucune licence de page builder. Une offre de maintenance existe, elle est optionnelle.</p>`,
+  },
+  {
+    q: 'Une landing page à 300 €, c’est possible ?',
+    a: `<p>Oui — sur un template rempli rapidement, sans travail de message ni de mesure. C'est parfois le bon choix : test très précoce d'une idée, budget réellement contraint. Ce n'est simplement pas le même produit, et il faut le savoir en achetant. L'article <a href="/guide/template-ou-sur-mesure/">template ou sur mesure</a> aide à choisir selon votre situation, sans dogme.</p>`,
+  },
+  {
+    q: 'Comment savoir si l’investissement sera rentable ?',
+    a: `<p>Faites le calcul avant de signer, avec vos chiffres : valeur moyenne d'un client, trafic attendu sur la page, taux de conversion actuel s'il existe. Ce calcul se fait ensemble au premier échange — et s'il ne passe pas, je vous le dis. Une landing page sur mesure se justifie quand chaque client vaut cher, quand du trafic payant est en jeu, ou quand la page actuelle gaspille un trafic réel.</p>`,
+  },
+];
+
+const jsonLd = graph(
+  webPage({ path: '/tarifs/', title, description }),
+  breadcrumbs(crumbs),
+  faqPage(faqItems.map(({ q, a }) => ({ q, a: a.replace(/<[^>]+>/g, '') })))
+);
+
+const facteurs = [
+  {
+    title: 'La profondeur du travail de message',
+    text: 'Positionnement déjà limpide et textes existants de qualité, ou offre à clarifier et copywriting à produire intégralement ? C’est le premier facteur de variation — et le plus déterminant pour le résultat.',
+  },
+  {
+    title: 'Le périmètre de la page',
+    text: 'Une page unique, ou une page principale accompagnée de déclinaisons (segments, campagnes, variantes de test) ? Chaque déclinaison bien pensée coûte moins cher que la première page, mais s’ajoute au périmètre.',
+  },
+  {
+    title: 'Les intégrations',
+    text: 'Formulaire simple, ou connexion à un CRM, un outil de prise de rendez-vous, un système de paiement, une séquence email ? Chaque intégration ajoute du développement et des tests.',
+  },
+  {
+    title: 'La matière disponible',
+    text: 'Preuves organisées, visuels exploitables, témoignages autorisés — ou tout à collecter et produire ? La collecte de matière est un vrai travail, souvent sous-estimé.',
+  },
+  {
+    title: 'Le calendrier',
+    text: 'Un délai standard permet d’organiser le travail sereinement. Une urgence réelle (campagne datée, lancement) peut s’absorber, mais elle se planifie — et parfois se facture.',
+  },
+];
+
+const marche = [
+  {
+    option: 'Vous-même, sur un builder',
+    cout: 'De 0 à ~300 € + abonnement mensuel',
+    quoi: 'Un template rempli par vos soins. Message, structure et mesure dépendent entièrement de vous.',
+    quand: 'Tester une idée très tôt, sans budget. À remplacer dès que l’enjeu devient réel.',
+  },
+  {
+    option: 'Freelance « exécution »',
+    cout: 'Généralement quelques centaines d’euros',
+    quoi: 'L’intégration de vos contenus dans une maquette ou un template. La stratégie et le texte restent à votre charge.',
+    quand: 'Vous avez déjà un message solide, des textes prêts, et besoin de mains.',
+  },
+  {
+    option: 'Studio sur mesure (cette offre)',
+    cout: creation ? `${creation} (fourchette indicative)` : 'Sur devis fermé',
+    quoi: 'Stratégie, copywriting, design, développement et mesure — un seul interlocuteur responsable du résultat d’ensemble.',
+    quand: 'L’enjeu commercial justifie une page traitée comme un actif : offre premium, trafic payant, lancement.',
+  },
+  {
+    option: 'Agence',
+    cout: 'Souvent plusieurs milliers d’euros',
+    quoi: 'Une équipe pluridisciplinaire, des process de compte, plusieurs interlocuteurs. Pertinent sur les dispositifs larges.',
+    quand: 'Campagnes multi-supports, volumétrie de pages, contraintes de grands comptes.',
+  },
+];
+---
+
+<Base title={title} description={description} jsonLd={jsonLd}>
+  <div class="container">
+    <section class="page-hero">
+      <Breadcrumbs items={crumbs} />
+      <p class="kicker">Tarifs</p>
+      <h1>Le prix d'une landing page, expliqué avant d'être facturé</h1>
+      <p class="lede">
+        Le marché affiche tout et son contraire — de 0 à 8 000 €. Cette page
+        explique ce qui fait réellement varier le prix, ce que pratiquent les
+        différents types de prestataires, et les fourchettes de ce studio.
+      </p>
+    </section>
+
+    <section class="section" aria-labelledby="fourchettes-titre">
+      <SectionHead
+        kicker="Les fourchettes du studio"
+        title="Trois périmètres, trois fourchettes"
+        lede="Fourchettes indicatives, hors taxes. Chaque projet reçoit un devis fermé après le premier échange — le montant n'évolue plus sans votre accord."
+      />
+      <div class="table-wrap">
+        <table>
+          <caption class="sr-only">Fourchettes tarifaires du studio par type de prestation</caption>
+          <thead>
+            <tr>
+              <th scope="col">Prestation</th>
+              <th scope="col">Ce qui est compris</th>
+              <th scope="col">Délai</th>
+              <th scope="col">Fourchette indicative</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Création complète</th>
+              <td>Stratégie, copywriting, design, développement, plan de mesure, bilan à 30 jours.</td>
+              <td>{site.commitments.projectLeadTime}</td>
+              <td class="prix">{creation ?? 'Sur devis'}</td>
+            </tr>
+            <tr>
+              <th scope="row">Refonte</th>
+              <td>Audit de l’existant, reformulation du message, nouvelle conception, développement, mesure.</td>
+              <td>{site.commitments.projectLeadTime}</td>
+              <td class="prix">{refonte ?? 'Sur devis'}</td>
+            </tr>
+            <tr>
+              <th scope="row">Audit seul</th>
+              <td>Analyse en 40 points, rapport priorisé, restitution en visio. <a href="/audit-landing-page/">Détail</a>.</td>
+              <td>{site.commitments.auditLeadTime}</td>
+              <td class="prix">{audit ?? 'Sur devis'}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small">
+        L'audit est déduit du montant de la refonte si vous poursuivez dans les
+        60 jours.
+      </p>
+    </section>
+  </div>
+
+  <section class="section band--paper-deep" aria-labelledby="facteurs-titre">
+    <div class="container">
+      <SectionHead
+        kicker="Comprendre le devis"
+        title="Les cinq facteurs qui font varier le prix"
+        lede="Deux projets « d'une page » peuvent représenter des volumes de travail sans rapport. Voici ce qui est réellement évalué."
+      />
+      <ol class="list-plain facteurs">
+        {
+          facteurs.map((f, i) => (
+            <li class="facteur reveal">
+              <span class="facteur-no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <h3>{f.title}</h3>
+                <p>{f.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="marche-titre">
+    <div class="container">
+      <SectionHead
+        kicker="Le paysage"
+        title="Template, freelance, studio, agence : qui fait quoi"
+        lede="Chaque option a sa zone de pertinence. La malhonnêteté serait de prétendre que la plus chère est toujours la bonne."
+      />
+      <div class="table-wrap">
+        <table>
+          <caption class="sr-only">Comparaison des options pour créer une landing page</caption>
+          <thead>
+            <tr>
+              <th scope="col">Option</th>
+              <th scope="col">Ordre de coût</th>
+              <th scope="col">Ce que vous achetez</th>
+              <th scope="col">Le bon cas d'usage</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              marche.map((m) => (
+                <tr>
+                  <th scope="row">{m.option}</th>
+                  <td>{m.cout}</td>
+                  <td>{m.quoi}</td>
+                  <td>{m.quand}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Pour aller plus loin sur ce choix :
+        <a href="/guide/template-ou-sur-mesure/">landing page template ou sur mesure, comment décider</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="faq-tarifs-titre">
+    <div class="container">
+      <SectionHead kicker="Questions de prix" title="Ce qu'on me demande sur les tarifs" />
+      <Faq items={faqItems} />
+    </div>
+  </section>
+
+  <CtaBand
+    title="Obtenez un devis fermé, pas une estimation vague"
+    text="Décrivez votre projet en quelques lignes. Premier échange sous 24 h ouvrées, devis fermé sous 72 h après l'entretien — et un avis honnête si le calcul de rentabilité ne passe pas."
+    label="Demander un devis"
+    track="cta-tarifs"
+  />
+</Base>
+
+<style>
+  .page-hero {
+    padding-block: clamp(3rem, 2rem + 4vw, 6rem) 0;
+    max-width: 52rem;
+  }
+
+  .prix {
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .facteurs {
+    display: grid;
+    gap: var(--space-8);
+    max-width: 52rem;
+  }
+
+  .facteur {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: var(--space-4);
+  }
+
+  .facteur-no {
+    font-family: var(--font-mono);
+    color: var(--vermillon);
+    font-size: var(--text-lg);
+  }
+
+  .facteur h3 {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-2);
+  }
+
+  .facteur p {
+    color: var(--ink-soft);
+    margin: 0;
+  }
+</style>

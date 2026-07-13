@@ -1,0 +1,281 @@
+---
+import Base from '@/layouts/Base.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import { site, formatPriceRange } from '@/config/site';
+import { graph, webPage, breadcrumbs, service } from '@/lib/jsonld';
+
+const title = 'Audit de landing page : diagnostic en 40 points, puis refonte';
+const description =
+  'Votre page reçoit du trafic mais convertit peu ? Audit complet en 40 points — message, structure, preuve, vitesse, mesure — avec rapport priorisé. Puis refonte si nécessaire.';
+
+const crumbs = [
+  { name: 'Accueil', path: '/' },
+  { name: 'Audit & refonte', path: '/audit-landing-page/' },
+];
+
+const jsonLd = graph(
+  webPage({ path: '/audit-landing-page/', title, description }),
+  service({
+    path: '/audit-landing-page/',
+    name: 'Audit et refonte de landing page',
+    description,
+  }),
+  breadcrumbs(crumbs)
+);
+
+const auditPrice = formatPriceRange(site.pricing.audit);
+const refontePrice = formatPriceRange(site.pricing.refonte);
+
+const axes = [
+  {
+    name: 'Message & positionnement',
+    points: 'La promesse tranche-t-elle ? La cible se reconnaît-elle ? Le vocabulaire est-il celui du client ou celui du prestataire ? Le titre survivrait-il chez un concurrent ?',
+  },
+  {
+    name: 'Structure & friction',
+    points: 'L’ordre des sections suit-il les questions du visiteur ? Combien de portes de sortie avant l’action ? Le formulaire demande-t-il plus que nécessaire ?',
+  },
+  {
+    name: 'Confiance & preuve',
+    points: 'Quelles preuves existent et lesquelles sont exploitées ? Les éléments de réassurance sont-ils placés au moment du doute ? Y a-t-il des signaux qui inquiètent ?',
+  },
+  {
+    name: 'Performance & technique',
+    points: 'Vitesse sur mobile réel, stabilité visuelle, accessibilité, compatibilité. Une page lente perd des visiteurs avant d’avoir argumenté.',
+  },
+  {
+    name: 'Mesure & SEO',
+    points: 'Les conversions sont-elles mesurées ? La page est-elle indexable, ses métadonnées propres ? Que voit un moteur de recherche — et une IA de recherche — en la lisant ?',
+  },
+];
+
+const deroule = [
+  {
+    step: 'Vous transmettez l’URL et le contexte',
+    detail: 'Objectif de la page, provenance du trafic, ce qui vous semble bloquer. Dix minutes de votre temps.',
+  },
+  {
+    step: 'Analyse complète en 40 points',
+    detail: `Les cinq axes ci-dessus, huit points chacun, sur la grille exacte publiée dans la checklist. Livré ${site.commitments.auditLeadTime}.`,
+  },
+  {
+    step: 'Rapport priorisé + restitution',
+    detail: 'Chaque constat est classé : correction rapide ou chantier de fond, avec l’impact attendu. Restitution de 45 minutes en visio, questions comprises.',
+  },
+];
+---
+
+<Base title={title} description={description} jsonLd={jsonLd}>
+  <div class="container">
+    <section class="page-hero">
+      <Breadcrumbs items={crumbs} />
+      <p class="kicker">Audit & refonte</p>
+      <h1>Avant de refaire votre landing page, comprenez pourquoi elle ne convertit pas</h1>
+      <p class="lede">
+        Refondre sans diagnostic, c'est repeindre sans chercher la fuite.
+        L'audit examine votre page en 40 points — du message à la mesure — et
+        vous laisse un plan d'action priorisé, exploitable avec ou sans moi.
+      </p>
+      <div class="hero-actions">
+        <a href="/contact/" class="btn" data-track="cta-audit">
+          Demander un audit <span class="arrow" aria-hidden="true">→</span>
+        </a>
+        {auditPrice && <p class="btn-note">{auditPrice} — livré {site.commitments.auditLeadTime}.</p>}
+      </div>
+    </section>
+  </div>
+
+  <section class="section" aria-labelledby="axes-titre">
+    <div class="container">
+      <SectionHead
+        kicker="Ce que l'audit examine"
+        title="Cinq axes, quarante points de contrôle"
+        lede="La même grille que la checklist publiée librement — l'audit y ajoute l'analyse experte de votre cas, le contexte de votre marché et la priorisation."
+      />
+      <ol class="list-plain axes">
+        {
+          axes.map((axe, i) => (
+            <li class="axe reveal">
+              <span class="axe-no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <h3>{axe.name}</h3>
+                <p>{axe.points}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+      <p>
+        Envie de faire un premier passage vous-même ? La
+        <a href="/checklist-landing-page/">checklist interactive des 40 points</a>
+        est libre d'accès, sans email demandé.
+      </p>
+    </div>
+  </section>
+
+  <section class="section band--paper-deep" aria-labelledby="deroule-titre">
+    <div class="container">
+      <SectionHead kicker="Le déroulé" title="Trois temps, une semaine" />
+      <ol class="list-plain deroule">
+        {
+          deroule.map((d, i) => (
+            <li class="reveal">
+              <span class="deroule-no" aria-hidden="true">{i + 1}</span>
+              <div>
+                <h3>{d.step}</h3>
+                <p>{d.detail}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+      <div class="engagement">
+        <p>
+          <strong>Engagement simple :</strong> si votre page n'a pas besoin
+          d'être refaite, le rapport le dira. Et si vous poursuivez vers une
+          refonte dans les 60 jours, l'audit est déduit du devis
+          {refontePrice && ` (refonte : ${refontePrice}, fourchette indicative)`}.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="refonte-titre">
+    <div class="container">
+      <SectionHead
+        kicker="La refonte"
+        title="Refondre en gardant ce qui fonctionne"
+        lede="Une refonte n'est pas une création qui aurait honte de l'existant : votre page actuelle contient des données précieuses — ce qui attire, ce qui retient, ce qui fait fuir."
+      />
+      <div class="refonte-grid">
+        <div>
+          <h3>Ce que la refonte conserve</h3>
+          <p>
+            Les acquis mesurables : les sources de trafic qui fonctionnent, les
+            arguments qui font mouche, le référencement existant — les URLs et
+            leur historique sont préservés ou proprement redirigés.
+          </p>
+        </div>
+        <div>
+          <h3>Ce que la refonte reprend</h3>
+          <p>
+            Le message d'abord, la structure ensuite, l'interface enfin — dans
+            cet ordre. Le déroulé suit la
+            <a href="/methode/">méthode en cinq étapes</a>, en démarrant de
+            l'audit plutôt que de zéro.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    title="Faites diagnostiquer votre page cette semaine"
+    text={`Transmettez l'URL et deux lignes de contexte. Réponse ${site.commitments.responseTime.replace('réponse ', '')}, audit livré ${site.commitments.auditLeadTime}.`}
+    label="Demander un audit"
+    track="cta-audit-bas"
+  />
+</Base>
+
+<style>
+  .page-hero {
+    padding-block: clamp(3rem, 2rem + 4vw, 6rem) 0;
+    max-width: 52rem;
+  }
+
+  .hero-actions {
+    margin-top: var(--space-8);
+  }
+
+  .axes {
+    display: grid;
+    gap: var(--space-8);
+    max-width: 52rem;
+    margin-bottom: var(--space-8);
+  }
+
+  .axe {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: var(--space-4);
+  }
+
+  .axe-no {
+    font-family: var(--font-mono);
+    color: var(--vermillon);
+    font-size: var(--text-lg);
+  }
+
+  .axe h3 {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-2);
+  }
+
+  .axe p {
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  .deroule {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-8);
+    margin-bottom: var(--space-8);
+  }
+
+  .deroule li {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+  }
+
+  .deroule-no {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xl);
+    color: var(--vermillon);
+    line-height: 1;
+  }
+
+  .deroule h3 {
+    font-size: var(--text-lg);
+    margin: 0;
+  }
+
+  .deroule p {
+    color: var(--ink-soft);
+    font-size: var(--text-sm);
+    margin: 0;
+  }
+
+  .engagement p {
+    max-width: var(--measure);
+    padding: var(--space-6);
+    border-left: 2px solid var(--vermillon);
+    background: color-mix(in srgb, var(--vermillon) 6%, transparent);
+    margin: 0;
+  }
+
+  .refonte-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-12);
+  }
+
+  .refonte-grid h3 {
+    margin-bottom: var(--space-3);
+  }
+
+  .refonte-grid p {
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  @media (max-width: 56rem) {
+    .deroule,
+    .refonte-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

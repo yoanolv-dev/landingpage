@@ -1,0 +1,16 @@
+---
+/**
+ * Note de conception révélée par le mode coulisses.
+ * `margin` : sur grand écran, la note se place dans la marge droite
+ * (le conteneur parent doit porter la classe `annotated`).
+ */
+interface Props {
+  margin?: boolean;
+}
+
+const { margin = false } = Astro.props;
+---
+
+<aside class:list={['annotation', { 'annotation--margin': margin }]}>
+  <slot />
+</aside>

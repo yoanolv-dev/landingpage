@@ -1,0 +1,171 @@
+---
+import Base from '@/layouts/Base.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import ContactForm from '@/components/ContactForm.astro';
+import { site } from '@/config/site';
+import { graph, webPage, breadcrumbs } from '@/lib/jsonld';
+
+const title = 'Présenter votre projet de landing page';
+const description =
+  'Décrivez votre offre et votre objectif en quelques lignes : réponse personnelle sous 24 h ouvrées, entretien de 30 minutes, puis devis fermé. Sans engagement.';
+
+const crumbs = [
+  { name: 'Accueil', path: '/' },
+  { name: 'Contact', path: '/contact/' },
+];
+
+const jsonLd = graph(
+  webPage({ path: '/contact/', title, description, type: 'ContactPage' }),
+  breadcrumbs(crumbs)
+);
+
+const suites = [
+  {
+    step: 'Sous 24 h ouvrées',
+    detail:
+      'Une réponse personnelle — pas un accusé automatique. Avec un premier avis sur votre situation, même s’il est de ne pas travailler ensemble.',
+  },
+  {
+    step: 'Un entretien de 30 minutes',
+    detail:
+      'En visio, pour comprendre votre offre, vos clients et votre objectif. C’est un échange de travail, pas un rendez-vous commercial déguisé.',
+  },
+  {
+    step: 'Un devis fermé sous 72 h',
+    detail:
+      'Périmètre précis, calendrier étape par étape, montant définitif. Vous décidez ensuite librement — le devis reste valable 30 jours.',
+  },
+];
+---
+
+<Base title={title} description={description} jsonLd={jsonLd}>
+  <div class="container">
+    <section class="page-hero">
+      <Breadcrumbs items={crumbs} />
+      <p class="kicker">Contact</p>
+      <h1>Présentez votre projet — trois phrases suffisent</h1>
+      <p class="lede">
+        Pas de brief formel à rédiger : dites ce que vous vendez, à qui, et ce
+        que la page doit obtenir. La qualité de la réponse ne dépend pas de la
+        longueur de votre message.
+      </p>
+    </section>
+
+    <div class="contact-grid section">
+      <div>
+        <ContactForm />
+      </div>
+
+      <aside class="contact-aside">
+        <div class="aside-block">
+          <h2 class="aside-title">Ce qui se passe ensuite</h2>
+          <ol class="list-plain suites">
+            {
+              suites.map((s, i) => (
+                <li>
+                  <span class="suite-no" aria-hidden="true">{i + 1}</span>
+                  <div>
+                    <h3>{s.step}</h3>
+                    <p>{s.detail}</p>
+                  </div>
+                </li>
+              ))
+            }
+          </ol>
+        </div>
+
+        <div class="aside-block">
+          <h2 class="aside-title">Vous préférez l'email direct ?</h2>
+          <p>
+            <a href={`mailto:${site.contact.email}`} data-track="clic-email">
+              {site.contact.email}
+            </a>
+          </p>
+          {
+            site.contact.calendarUrl && (
+              <p>
+                Ou réservez directement un créneau :
+                <a href={site.contact.calendarUrl} data-track="prise-rdv" rel="noopener">
+                  choisir un horaire
+                </a>
+                .
+              </p>
+            )
+          }
+          <p class="small">{site.contact.area}.</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .page-hero {
+    padding-block: clamp(3rem, 2rem + 4vw, 6rem) 0;
+    max-width: 52rem;
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: var(--space-16);
+    align-items: start;
+  }
+
+  .contact-aside {
+    display: grid;
+    gap: var(--space-8);
+    position: sticky;
+    top: 6rem;
+  }
+
+  .aside-block {
+    border: var(--hairline);
+    padding: var(--space-6);
+    background: var(--paper-deep);
+  }
+
+  .aside-title {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-4);
+  }
+
+  .suites {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .suites li {
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    gap: var(--space-3);
+  }
+
+  .suite-no {
+    font-family: var(--font-mono);
+    color: var(--vermillon);
+    font-size: var(--text-lg);
+  }
+
+  .suites h3 {
+    font-size: var(--text-base);
+    margin-bottom: var(--space-1);
+  }
+
+  .suites p {
+    font-size: var(--text-sm);
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  @media (max-width: 56rem) {
+    .contact-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-8);
+    }
+
+    .contact-aside {
+      position: static;
+    }
+  }
+</style>

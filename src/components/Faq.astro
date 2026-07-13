@@ -1,0 +1,84 @@
+---
+/**
+ * FAQ accessible en <details>/<summary> natifs.
+ * Le JSON-LD FAQPage est généré par la page appelante à partir
+ * des mêmes données — jamais de divergence contenu/balisage.
+ */
+interface Props {
+  items: { q: string; a: string }[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="faq">
+  {
+    items.map((item) => (
+      <details class="faq-item">
+        <summary>
+          <span class="faq-q">{item.q}</span>
+          <span class="faq-mark" aria-hidden="true">
+            +
+          </span>
+        </summary>
+        <div class="faq-a" set:html={item.a} />
+      </details>
+    ))
+  }
+</div>
+
+<style>
+  .faq {
+    max-width: var(--measure);
+    border-top: var(--hairline);
+  }
+
+  .faq-item {
+    border-bottom: var(--hairline);
+  }
+
+  summary {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-6);
+    padding: var(--space-6) 0;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 540;
+    font-size: var(--text-lg);
+    font-variation-settings: 'opsz' 30;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary:hover {
+    color: var(--vermillon-ink);
+  }
+
+  .faq-mark {
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    color: var(--vermillon);
+    transition: rotate var(--speed) var(--ease);
+  }
+
+  details[open] .faq-mark {
+    rotate: 45deg;
+  }
+
+  .faq-a {
+    padding-bottom: var(--space-6);
+    color: var(--ink-soft);
+  }
+
+  .faq-a :global(p) {
+    margin-bottom: var(--space-3);
+  }
+
+  .faq-a :global(p:last-child) {
+    margin-bottom: 0;
+  }
+</style>

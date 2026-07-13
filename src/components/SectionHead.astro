@@ -1,0 +1,20 @@
+---
+interface Props {
+  no?: string;
+  kicker: string;
+  title: string;
+  lede?: string;
+  /** Niveau de titre (2 par défaut). */
+  level?: 2 | 3;
+}
+
+const { no, kicker, title, lede, level = 2 } = Astro.props;
+const Heading = `h${level}` as 'h2' | 'h3';
+---
+
+<header class="section-head">
+  {no && <p class="section-no" aria-hidden="true">{no}</p>}
+  <p class="kicker">{kicker}</p>
+  <Heading set:html={title} />
+  {lede && <p class="lede">{lede}</p>}
+</header>

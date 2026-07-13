@@ -1,0 +1,118 @@
+---
+import Base from '@/layouts/Base.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import { graph, webPage, breadcrumbs } from '@/lib/jsonld';
+
+const title = 'Réalisations — études de cas documentées';
+const description =
+  'Les projets du studio, documentés en études de cas : contexte, décisions stratégiques, conception, résultats mesurés. Première étude publiée : ce site lui-même.';
+
+const crumbs = [
+  { name: 'Accueil', path: '/' },
+  { name: 'Réalisations', path: '/realisations/' },
+];
+
+const jsonLd = graph(
+  webPage({ path: '/realisations/', title, description, type: 'CollectionPage' }),
+  breadcrumbs(crumbs)
+);
+---
+
+<Base title={title} description={description} jsonLd={jsonLd}>
+  <div class="container">
+    <section class="page-hero">
+      <Breadcrumbs items={crumbs} />
+      <p class="kicker">Réalisations</p>
+      <h1>Des études de cas, pas une galerie d'images</h1>
+      <p class="lede">
+        Chaque projet publié ici est documenté comme un cas : le contexte, le
+        problème, les décisions prises et leurs raisons, puis ce que les
+        chiffres ont dit. Voir de belles captures n'apprend rien ; comprendre
+        les décisions, si.
+      </p>
+    </section>
+
+    <section class="section" aria-label="Études de cas">
+      <article class="cas reveal">
+        <a href="/realisations/ce-site/">
+          <p class="kicker">Étude de cas nº 1 — auto-commande</p>
+          <h2>Ce site : concevoir la landing page d'un studio de landing pages</h2>
+          <p>
+            Le brief le plus périlleux qui soit : chaque décision est jugée
+            sur pièce par des visiteurs venus précisément évaluer ce
+            savoir-faire. Positionnement, copywriting, système visuel,
+            technique, SEO — toutes les décisions documentées, comme pour un
+            client.
+          </p>
+          <span class="cas-more">Lire l'étude de cas complète →</span>
+        </a>
+      </article>
+
+      <div class="cas-avenir">
+        <h2>Les prochaines études de cas</h2>
+        <p>
+          Ce studio, sous cette forme, est récent : les études de cas clients
+          seront publiées ici au fil des projets — avec l'accord des
+          intéressés, leurs vrais noms et leurs vrais chiffres, ou pas du
+          tout. Vous ne trouverez sur ce site ni portfolio gonflé, ni
+          « client confidentiel » aux résultats spectaculaires et
+          invérifiables.
+        </p>
+        <p>
+          <strong>Votre projet pourrait être le prochain cas documenté</strong> —
+          les premiers clients d'un studio exigeant bénéficient d'une attention
+          que les structures établies n'offrent plus.
+          <a href="/contact/">Présentez votre projet</a>.
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .page-hero {
+    padding-block: clamp(3rem, 2rem + 4vw, 6rem) 0;
+    max-width: 52rem;
+  }
+
+  .cas a {
+    display: grid;
+    gap: var(--space-4);
+    padding: clamp(1.5rem, 4vw, 3rem);
+    border: 1px solid var(--ink);
+    text-decoration: none;
+    max-width: 52rem;
+    transition: background var(--speed) var(--ease);
+  }
+
+  .cas a:hover {
+    background: var(--paper-deep);
+    color: inherit;
+  }
+
+  .cas h2 {
+    margin: 0;
+  }
+
+  .cas p {
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  .cas-more {
+    font-weight: 520;
+    color: var(--vermillon-ink);
+  }
+
+  .cas-avenir {
+    margin-top: var(--space-16);
+    max-width: var(--measure);
+  }
+
+  .cas-avenir h2 {
+    font-size: var(--text-xl);
+  }
+</style>

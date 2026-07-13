@@ -1,0 +1,162 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import Base from '@/layouts/Base.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import { site } from '@/config/site';
+import { graph, webPage, breadcrumbs, article as articleLd } from '@/lib/jsonld';
+
+export async function getStaticPaths() {
+  const articles = await getCollection('guide');
+  return articles.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'guide'>;
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const path = `/guide/${entry.id}/`;
+const title = entry.data.seoTitle ?? entry.data.title;
+const description = entry.data.description;
+
+const crumbs = [
+  { name: 'Accueil', path: '/' },
+  { name: 'Guide', path: '/guide/' },
+  { name: entry.data.title, path },
+];
+
+const iso = (d: Date) => d.toISOString().split('T')[0]!;
+
+const jsonLd = graph(
+  webPage({
+    path,
+    title,
+    description,
+    datePublished: iso(entry.data.datePublished),
+    dateModified: iso(entry.data.dateModified),
+  }),
+  articleLd({
+    path,
+    title: entry.data.title,
+    description,
+    datePublished: iso(entry.data.datePublished),
+    dateModified: iso(entry.data.dateModified),
+  }),
+  breadcrumbs(crumbs)
+);
+
+const dateFmt = new Intl.DateTimeFormat('fr-FR', { dateStyle: 'long' });
+
+const others = (await getCollection('guide'))
+  .filter((a) => a.id !== entry.id)
+  .sort((a, b) => a.data.order - b.data.order);
+---
+
+<Base title={title} description={description} jsonLd={jsonLd} ogType="article">
+  <article class="container">
+    <header class="article-header">
+      <Breadcrumbs items={crumbs} />
+      <p class="kicker">Le guide</p>
+      <h1>{entry.data.title}</h1>
+      <p class="article-meta small">
+        Par {site.founder.name ?? `l'auteur du studio ${site.brand}`} ·
+        publié le
+        <time datetime={iso(entry.data.datePublished)}>
+          {dateFmt.format(entry.data.datePublished)}
+        </time>
+        {
+          entry.data.dateModified.getTime() !==
+            entry.data.datePublished.getTime() && (
+            <>
+              · mis à jour le
+              <time datetime={iso(entry.data.dateModified)}>
+                {dateFmt.format(entry.data.dateModified)}
+              </time>
+            </>
+          )
+        }
+      </p>
+    </header>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <footer class="article-footer">
+      <div class="author-note">
+        <p>
+          <strong>Qui écrit ici ?</strong>
+          {site.founder.bioShort ??
+            `Ces articles sont écrits par la personne qui conçoit les pages du studio ${site.brand} — pas par une rédaction externe. Les principes décrits sont ceux réellement appliqués sur les projets.`}
+        </p>
+      </div>
+
+      <nav class="related" aria-label="Autres articles du guide">
+        <p class="kicker">Poursuivre la lecture</p>
+        <ul class="list-plain">
+          {
+            others.map((other) => (
+              <li>
+                <a href={`/guide/${other.id}/`}>{other.data.title}</a>
+              </li>
+            ))
+          }
+          <li>
+            <a href="/checklist-landing-page/">
+              La checklist interactive des 40 points
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </footer>
+  </article>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .article-header {
+    padding-block: clamp(3rem, 2rem + 4vw, 6rem) var(--space-8);
+    max-width: 52rem;
+  }
+
+  .article-header h1 {
+    font-size: var(--text-3xl);
+  }
+
+  .article-meta {
+    margin: 0;
+  }
+
+  .prose :global(table) {
+    display: block;
+    overflow-x: auto;
+  }
+
+  .article-footer {
+    max-width: var(--measure);
+    margin-top: var(--space-16);
+    display: grid;
+    gap: var(--space-8);
+  }
+
+  .author-note p {
+    padding: var(--space-6);
+    background: var(--paper-deep);
+    border-left: 2px solid var(--vermillon);
+    font-size: var(--text-sm);
+    margin: 0;
+  }
+
+  .related ul {
+    display: grid;
+    gap: var(--space-3);
+  }
+</style>

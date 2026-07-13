@@ -1,0 +1,183 @@
+---
+import Base from '@/layouts/Base.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import { site } from '@/config/site';
+import { graph, webPage, breadcrumbs } from '@/lib/jsonld';
+
+const title = `À propos — le studio ${site.brand}`;
+const description =
+  'Un studio indépendant, un seul interlocuteur du brief à la mise en ligne : pourquoi ce format produit de meilleures landing pages que la chaîne agence classique.';
+
+const crumbs = [
+  { name: 'Accueil', path: '/' },
+  { name: 'À propos', path: '/a-propos/' },
+];
+
+const jsonLd = graph(
+  webPage({ path: '/a-propos/', title, description, type: 'AboutPage' }),
+  breadcrumbs(crumbs)
+);
+
+const convictions = [
+  {
+    title: 'Une page est un argumentaire, pas une décoration',
+    text: 'Le design le plus soigné ne rattrape pas un message qui ne tranche rien. Le travail commence toujours par votre offre, vos clients et leurs objections — l’esthétique met en scène ces décisions.',
+  },
+  {
+    title: 'La vérité est plus rentable que l’enjolivure',
+    text: 'Pas de faux témoignages, pas de compteurs gonflés, pas de promesses de position Google. Ce qui ne peut pas être prouvé n’est pas affirmé — sur ce site comme sur les vôtres.',
+  },
+  {
+    title: 'Vous devez rester propriétaire et autonome',
+    text: 'Code, contenus, hébergement : tout vous appartient. Pas d’abonnement captif, pas de dépendance au studio. Une collaboration se poursuit parce qu’elle est utile, jamais parce qu’elle est verrouillée.',
+  },
+  {
+    title: 'Ce qui n’est pas mesuré n’existe pas',
+    text: 'Chaque page part avec son plan de mesure. Les décisions d’itération se prennent sur des données, pas sur des impressions — y compris quand les données contredisent le design.',
+  },
+];
+---
+
+<Base title={title} description={description} jsonLd={jsonLd}>
+  <div class="container">
+    <section class="page-hero">
+      <Breadcrumbs items={crumbs} />
+      <p class="kicker">À propos</p>
+      <h1>Un studio d'une personne, par choix</h1>
+      <p class="lede">
+        {site.brand} est un studio indépendant : la personne qui comprend
+        votre offre est celle qui écrit le message, dessine la page, la
+        développe et lit les chiffres. Ce format n'est pas une étape avant de
+        « grossir » — c'est ce qui garantit la cohérence du résultat.
+      </p>
+    </section>
+
+    <section class="section" aria-labelledby="format-titre">
+      <h2 id="format-titre">Pourquoi pas une agence ?</h2>
+      <div class="format-grid">
+        <p>
+          Dans une chaîne classique, votre projet traverse quatre paires de
+          mains : un commercial le vend, un chef de projet le traduit, un
+          designer l'interprète, un développeur l'exécute. À chaque passage,
+          une part de la compréhension initiale s'évapore — et personne n'est
+          responsable du résultat commercial final.
+        </p>
+        <p>
+          Ici, la personne de l'entretien initial est celle qui livre. Les
+          arbitrages — ce titre plutôt qu'un autre, cette section avant
+          celle-là, ce compromis vitesse/effet — se prennent avec le contexte
+          complet de votre activité en tête. C'est plus lent qu'une chaîne de
+          production ; c'est aussi pour cela que le studio prend peu de
+          projets à la fois.
+        </p>
+      </div>
+    </section>
+
+    <section class="section band--paper-deep" aria-labelledby="convictions-titre">
+      <h2 id="convictions-titre">Quatre convictions de travail</h2>
+      <div class="convictions">
+        {
+          convictions.map((c, i) => (
+            <div class="conviction reveal">
+              <span class="section-no" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <h3>{c.title}</h3>
+              <p>{c.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="qui-titre">
+      <h2 id="qui-titre">Qui est derrière {site.brand} ?</h2>
+      <div class="qui">
+        {
+          site.founder.name ? (
+            <>
+              <p>
+                <strong>{site.founder.name}</strong> — {site.founder.role.toLowerCase()}.
+              </p>
+              {site.founder.bioShort && <p>{site.founder.bioShort}</p>}
+            </>
+          ) : (
+            <p>
+              Le studio est mené par son fondateur, seul interlocuteur de tous
+              les projets. Sa présentation détaillée — parcours, projets,
+              références — est en cours de publication ; en attendant, le
+              meilleur moyen de juger le travail reste
+              <a href="/realisations/ce-site/"> l'étude de cas de ce site</a>
+              et <a href="/methode/">la méthode documentée</a>.
+            </p>
+          )
+        }
+        <p>
+          Le studio travaille à distance pour toute la France
+          {site.contact.city && `, depuis ${site.contact.city}`}. Contact
+          direct : <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a>.
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <CtaBand
+    title="Jugez sur pièce, pas sur promesse"
+    text="La meilleure façon d'évaluer ce studio : lui présenter un vrai projet et juger la qualité de la première réponse. Elle est gratuite, argumentée, et honnête."
+  />
+</Base>
+
+<style>
+  .page-hero {
+    padding-block: clamp(3rem, 2rem + 4vw, 6rem) 0;
+    max-width: 52rem;
+  }
+
+  .format-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-12);
+    max-width: 60rem;
+  }
+
+  .format-grid p {
+    margin: 0;
+  }
+
+  .convictions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-12);
+    max-width: 60rem;
+  }
+
+  .conviction .section-no {
+    display: block;
+    color: var(--vermillon);
+    margin-bottom: var(--space-3);
+  }
+
+  .conviction h3 {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-2);
+  }
+
+  .conviction p {
+    color: var(--ink-soft);
+    font-size: var(--text-sm);
+    margin: 0;
+  }
+
+  .qui {
+    max-width: var(--measure);
+  }
+
+  @media (max-width: 56rem) {
+    .format-grid,
+    .convictions {
+      grid-template-columns: 1fr;
+      gap: var(--space-8);
+    }
+  }
+</style>

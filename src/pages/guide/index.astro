@@ -1,0 +1,165 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '@/layouts/Base.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import { graph, webPage, breadcrumbs } from '@/lib/jsonld';
+
+const title = 'Le guide de la landing page — comprendre avant de construire';
+const description =
+  'Définition, structure, erreurs à éviter, choix entre template et sur mesure : un guide de référence en français pour concevoir des landing pages qui convertissent.';
+
+const crumbs = [
+  { name: 'Accueil', path: '/' },
+  { name: 'Guide', path: '/guide/' },
+];
+
+const jsonLd = graph(
+  webPage({ path: '/guide/', title, description, type: 'CollectionPage' }),
+  breadcrumbs(crumbs)
+);
+
+const articles = (await getCollection('guide')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+
+const dateFmt = new Intl.DateTimeFormat('fr-FR', { dateStyle: 'long' });
+---
+
+<Base title={title} description={description} jsonLd={jsonLd}>
+  <div class="container">
+    <section class="page-hero">
+      <Breadcrumbs items={crumbs} />
+      <p class="kicker">Le guide</p>
+      <h1>Comprendre les landing pages, avant d'en construire une</h1>
+      <p class="lede">
+        Ce guide documente ce qui fait réellement convertir une page — sans
+        recettes miracles ni statistiques invérifiables. Les mêmes principes
+        que ceux appliqués sur les projets du studio, en accès libre.
+      </p>
+    </section>
+
+    <section class="section" aria-label="Articles du guide">
+      <ol class="list-plain articles">
+        {
+          articles.map((article, i) => (
+            <li class="article-row reveal">
+              <a href={`/guide/${article.id}/`}>
+                <span class="article-no" aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <div class="article-body">
+                  <h2>{article.data.title}</h2>
+                  <p class="article-question">{article.data.question}</p>
+                  <p class="article-date small">
+                    Mis à jour le {dateFmt.format(article.data.dateModified)}
+                  </p>
+                </div>
+                <span class="article-arrow" aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+
+      <aside class="outil-callout">
+        <p class="kicker">L'outil du guide</p>
+        <h2>La checklist interactive des 40 points</h2>
+        <p>
+          La grille d'audit du studio, en version libre : évaluez votre page
+          axe par axe — message, structure, confiance, technique, mesure — et
+          repartez avec vos priorités. Sans inscription, sans email.
+        </p>
+        <a href="/checklist-landing-page/" class="btn">
+          Auditer ma page <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </aside>
+    </section>
+  </div>
+
+  <CtaBand
+    title="La théorie est libre. La pratique se délègue."
+    text="Si votre prochaine étape est une page à créer ou à refondre, présentez votre projet : réponse argumentée sous 24 h ouvrées."
+  />
+</Base>
+
+<style>
+  .page-hero {
+    padding-block: clamp(3rem, 2rem + 4vw, 6rem) 0;
+    max-width: 52rem;
+  }
+
+  .articles {
+    display: grid;
+    margin-bottom: var(--space-16);
+  }
+
+  .article-row a {
+    display: grid;
+    grid-template-columns: 3.5rem 1fr auto;
+    gap: var(--space-6);
+    align-items: baseline;
+    padding-block: var(--space-8);
+    border-top: var(--hairline);
+    text-decoration: none;
+    transition: background var(--speed) var(--ease);
+  }
+
+  .article-row:last-child a {
+    border-bottom: var(--hairline);
+  }
+
+  .article-row a:hover {
+    background: var(--paper-deep);
+    color: inherit;
+  }
+
+  .article-no {
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    color: var(--vermillon);
+  }
+
+  .article-body h2 {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-2);
+  }
+
+  .article-question {
+    color: var(--ink-soft);
+    margin-bottom: var(--space-2);
+  }
+
+  .article-date {
+    margin: 0;
+  }
+
+  .article-arrow {
+    font-size: var(--text-xl);
+    color: var(--vermillon);
+  }
+
+  .outil-callout {
+    border: 1px solid var(--ink);
+    padding: clamp(1.5rem, 4vw, 3rem);
+    max-width: 44rem;
+  }
+
+  .outil-callout h2 {
+    margin-bottom: var(--space-4);
+  }
+
+  .outil-callout p {
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 40rem) {
+    .article-row a {
+      grid-template-columns: 2.5rem 1fr;
+    }
+
+    .article-arrow {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,142 @@
+---
+import '@/styles/global.css';
+import { site } from '@/config/site';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+
+interface Props {
+  /** Title unique de la page (sans le nom de marque, ajouté automatiquement). */
+  title: string;
+  /** Meta description unique, 140–160 caractères. */
+  description: string;
+  /** Graphe JSON-LD sérialisé (via src/lib/jsonld.ts). */
+  jsonLd?: string;
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+  /** Suffixe de marque dans le title (désactivable pour la home). */
+  brandInTitle?: boolean;
+}
+
+const {
+  title,
+  description,
+  jsonLd,
+  ogType = 'website',
+  noindex = false,
+  brandInTitle = true,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).href;
+const fullTitle = brandInTitle ? `${title} — ${site.brand}` : title;
+const ogImage = new URL('/og/default.png', Astro.site ?? site.url).href;
+const gscToken = import.meta.env.PUBLIC_GSC_VERIFICATION;
+const analyticsHost = import.meta.env.PUBLIC_ANALYTICS_HOST;
+const analyticsDomain = import.meta.env.PUBLIC_ANALYTICS_DOMAIN;
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      // Signale la présence de JavaScript : les effets de révélation
+      // ne masquent jamais le contenu quand ce script ne s'exécute pas.
+      document.documentElement.classList.add('js');
+    </script>
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {gscToken && <meta name="google-site-verification" content={gscToken} />}
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#f7f3ea" />
+
+    <link
+      rel="preload"
+      href="/fonts/fraunces-var.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={site.brand} />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    {jsonLd && <script is:inline type="application/ld+json" set:html={jsonLd} />}
+
+    <slot name="head" />
+  </head>
+  <body>
+    <a href="#contenu" class="skip-link">Aller au contenu</a>
+    <Header />
+    <main id="contenu">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      // Révélations au défilement — inertes si reduced-motion.
+      const items = document.querySelectorAll('.reveal');
+      if (
+        items.length &&
+        !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                e.target.classList.add('is-visible');
+                io.unobserve(e.target);
+              }
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px' }
+        );
+        items.forEach((el) => io.observe(el));
+      }
+    </script>
+
+    <script
+      is:inline
+      define:vars={{ analyticsHost, analyticsDomain }}
+    >
+      // Couche de mesure minimale, sans cookie.
+      // Ne charge rien tant que PUBLIC_ANALYTICS_HOST n'est pas configuré.
+      window.track = function (name, props) {
+        if (!analyticsHost) return;
+        try {
+          navigator.sendBeacon(
+            analyticsHost.replace(/\/$/, '') + '/api/event',
+            JSON.stringify({
+              n: name,
+              u: location.href,
+              d: analyticsDomain || location.hostname,
+              r: document.referrer || null,
+              p: props || undefined,
+            })
+          );
+        } catch (_) {
+          /* la mesure ne doit jamais casser la page */
+        }
+      };
+      document.addEventListener('click', function (e) {
+        const el = e.target instanceof Element && e.target.closest('[data-track]');
+        if (el) window.track(el.getAttribute('data-track'));
+      });
+      if (analyticsHost) window.track('pageview');
+    </script>
+  </body>
+</html>

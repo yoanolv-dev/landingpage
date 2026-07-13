@@ -1,0 +1,358 @@
+---
+import Base from '@/layouts/Base.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import { site } from '@/config/site';
+import { graph, webPage, breadcrumbs, service } from '@/lib/jsonld';
+
+const title = 'La méthode — comment naît une landing page qui convertit';
+const description =
+  'De l’entretien stratégique à la mesure des résultats : les cinq étapes de conception d’une landing page sur mesure, avec le livrable et votre rôle à chacune.';
+
+const crumbs = [
+  { name: 'Accueil', path: '/' },
+  { name: 'La méthode', path: '/methode/' },
+];
+
+const jsonLd = graph(
+  webPage({ path: '/methode/', title, description }),
+  service({
+    path: '/methode/',
+    name: 'Conception de landing page — méthode en cinq étapes',
+    description,
+  }),
+  breadcrumbs(crumbs)
+);
+
+const phases = [
+  {
+    no: '01',
+    name: 'Comprendre',
+    duree: 'Semaine 1',
+    intro:
+      'Tout part d’un entretien approfondi — une à deux heures, en visio. Pas de questionnaire automatique : une vraie conversation sur votre activité.',
+    points: [
+      'Votre offre : ce que vous vendez réellement, à qui, contre quelles alternatives.',
+      'Vos clients : leurs mots, leurs déclencheurs d’achat, leurs hésitations récurrentes.',
+      'Votre contexte : d’où viendra le trafic, ce qui a déjà été tenté, ce qui doit changer.',
+      'Vos preuves disponibles : résultats, méthode, garanties, témoignages réels.',
+    ],
+    votreRole: 'Répondre franchement, transmettre l’existant (page actuelle, retours clients, objections entendues).',
+    livrable:
+      'Un brief stratégique écrit : positionnement de la page, cible, objectif unique, arguments hiérarchisés, objections à traiter. Vous le validez avant toute suite.',
+    evite: 'Une page construite sur des suppositions.',
+  },
+  {
+    no: '02',
+    name: 'Formuler',
+    duree: 'Semaine 2',
+    intro:
+      'Le texte s’écrit avant la maquette. C’est le message qui commande la structure — jamais l’inverse.',
+    points: [
+      'La promesse principale : une phrase qui nomme le problème et tranche.',
+      'L’architecture de l’argumentaire : chaque section répond à une question du visiteur, dans l’ordre où elle se pose.',
+      'Les appels à l’action : formulés comme des bénéfices, avec la microcopie qui lève les dernières hésitations.',
+      'Les preuves, mises en scène : rien d’inventé, tout ce qui existe est exploité.',
+    ],
+    votreRole: 'Une relecture attentive : vous connaissez votre métier mieux que personne, le texte doit sonner juste.',
+    livrable:
+      'Le copywriting intégral de la page, section par section, avec la justification de chaque choix.',
+    evite: 'Le « lorem ipsum » habillé — une belle page qui n’a rien à dire.',
+  },
+  {
+    no: '03',
+    name: 'Concevoir',
+    duree: 'Semaines 2–3',
+    intro:
+      'Le design met l’argumentaire en scène : hiérarchie visuelle, rythme de lecture, direction artistique alignée sur votre positionnement.',
+    points: [
+      'Hiérarchie : l’œil doit rencontrer les informations dans l’ordre décidé à l’étape 2.',
+      'Signature : votre page ne doit pas ressembler à celle d’un concurrent équipé du même template.',
+      'Mobile d’abord : la majorité de vos visiteurs liront la page sur un téléphone.',
+      'Sobriété du mouvement : l’animation guide la lecture, elle ne la ralentit jamais.',
+    ],
+    votreRole: 'Deux allers-retours de retours structurés — prévus dans le calendrier, pas subis.',
+    livrable:
+      'Une maquette navigable, desktop et mobile, avec les vrais textes en place.',
+    evite: 'La maquette séduisante en réunion mais infaisable ou illisible en réel.',
+  },
+  {
+    no: '04',
+    name: 'Construire',
+    duree: 'Semaines 3–4',
+    intro:
+      'Développement sur mesure, sans page builder : un code léger que vous possédez entièrement.',
+    points: [
+      'Vitesse : la page vise les seuils Core Web Vitals sur mobile réel, pas seulement en laboratoire.',
+      'Référencement : HTML sémantique, métadonnées, données structurées, contenu indexable sans JavaScript.',
+      'Accessibilité : navigation clavier, contrastes, formulaires étiquetés.',
+      'Autonomie : contenus modifiables et documentation de prise en main incluses.',
+    ],
+    votreRole: 'Fournir les accès (domaine, hébergement) — ou me laisser tout installer.',
+    livrable:
+      'La page en production sur votre domaine, testée sur navigateurs et appareils réels.',
+    evite: 'La page verrouillée dans un abonnement, lente, ou invisible pour Google.',
+  },
+  {
+    no: '05',
+    name: 'Mesurer',
+    duree: 'Semaines 4–5, puis J+30',
+    intro:
+      'Une landing page est un actif commercial : elle doit rendre des comptes. La mesure est installée avant le premier visiteur.',
+    points: [
+      'Événements de conversion : clics sur l’action principale, envois de formulaire, appels.',
+      'Mesure respectueuse : solution sans cookie par défaut, conforme au RGPD.',
+      'Lecture des résultats : ce que disent les chiffres, ce qu’ils ne disent pas.',
+      'Recommandations : quoi tester en premier si la page doit encore progresser.',
+    ],
+    votreRole: 'Un point de 30 minutes à J+30 pour lire les premiers résultats ensemble.',
+    livrable: 'Le plan de mesure documenté et un bilan écrit à 30 jours.',
+    evite: 'Le « mis en ligne, on verra bien » — une page dont personne ne saura jamais si elle fonctionne.',
+  },
+];
+
+const principes = [
+  {
+    title: 'Le message avant la maquette',
+    text: 'Une landing page est un argumentaire ordonné. Tant que le message n’est pas arrêté, dessiner est prématuré : le design met en scène des décisions, il ne les remplace pas.',
+  },
+  {
+    title: 'Une page, un objectif',
+    text: 'Chaque page défend une seule action. Tout ce qui n’y contribue pas — menu superflu, liens de fuite, section décorative — est retiré. La clarté est une politesse faite au visiteur.',
+  },
+  {
+    title: 'Rien sans mesure',
+    text: 'Ce qui n’est pas mesuré ne peut pas s’améliorer. La conversion se travaille après la mise en ligne aussi : la page est livrée instrumentée, avec de quoi décider des itérations.',
+  },
+];
+---
+
+<Base title={title} description={description} jsonLd={jsonLd}>
+  <div class="container">
+    <section class="page-hero">
+      <Breadcrumbs items={crumbs} />
+      <p class="kicker">La méthode</p>
+      <h1>Une landing page se conçoit. Voici comment, étape par étape.</h1>
+      <p class="lede">
+        Cinq étapes, chacune close par un livrable que vous validez. Vous
+        savez toujours ce qui a été décidé, pourquoi, et ce qui vient
+        ensuite. Durée totale : {site.commitments.projectLeadTime}.
+      </p>
+    </section>
+  </div>
+
+  <section class="section" aria-labelledby="principes-titre">
+    <div class="container">
+      <SectionHead
+        kicker="Trois principes"
+        title="Ce qui ne se négocie pas"
+      />
+      <div class="principes">
+        {
+          principes.map((p, i) => (
+            <div class="principe reveal">
+              <span class="section-no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{p.title}</h3>
+              <p>{p.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-label="Les cinq étapes détaillées">
+    <div class="container">
+      <SectionHead
+        kicker="Le déroulé"
+        title="Cinq étapes, cinq livrables"
+        lede="Le calendrier précis est posé dès le devis. Les durées indiquées correspondent à un projet type de création complète."
+      />
+      <ol class="list-plain phases">
+        {
+          phases.map((phase) => (
+            <li class="phase reveal">
+              <header class="phase-head">
+                <span class="phase-no" aria-hidden="true">{phase.no}</span>
+                <div>
+                  <h3>{phase.name}</h3>
+                  <p class="phase-duree mono">{phase.duree}</p>
+                </div>
+              </header>
+              <div class="phase-body">
+                <p class="phase-intro">{phase.intro}</p>
+                <ul class="phase-points">
+                  {phase.points.map((pt) => (
+                    <li>{pt}</li>
+                  ))}
+                </ul>
+                <dl class="phase-meta">
+                  <div>
+                    <dt>Votre rôle</dt>
+                    <dd>{phase.votreRole}</dd>
+                  </div>
+                  <div>
+                    <dt>Livrable</dt>
+                    <dd>{phase.livrable}</dd>
+                  </div>
+                  <div>
+                    <dt>Ce que cette étape évite</dt>
+                    <dd>{phase.evite}</dd>
+                  </div>
+                </dl>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section band--paper-deep" aria-labelledby="apres-titre">
+    <div class="container">
+      <SectionHead
+        kicker="Et après ?"
+        title="La mise en ligne n'est pas la fin du travail"
+        lede="Selon vos besoins : maintenance, déclinaisons de la page pour d'autres segments ou campagnes, tests d'amélioration continue. Rien d'imposé — la page est conçue pour que vous puissiez aussi vivre sans moi."
+      />
+      <p>
+        Pour approfondir avant de nous parler :
+        <a href="/guide/anatomie-landing-page/">l'anatomie d'une page qui convertit</a>,
+        <a href="/tarifs/">ce qui détermine le prix d'un projet</a>, ou
+        <a href="/checklist-landing-page/">la checklist pour auditer l'existant</a>.
+      </p>
+    </div>
+  </section>
+
+  <CtaBand
+    title="Votre projet mérite ce niveau de méthode"
+    text={`Présentez votre offre et votre objectif en quelques lignes — vous recevez une ${site.commitments.responseTime.replace('réponse ', 'réponse argumentée ')} avec un premier avis honnête sur votre situation.`}
+  />
+</Base>
+
+<style>
+  .page-hero {
+    padding-block: clamp(3rem, 2rem + 4vw, 6rem) 0;
+    max-width: 52rem;
+  }
+
+  .principes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-12);
+  }
+
+  .principe .section-no {
+    display: block;
+    margin-bottom: var(--space-3);
+    color: var(--vermillon);
+  }
+
+  .principe h3 {
+    margin-bottom: var(--space-3);
+  }
+
+  .principe p {
+    color: var(--ink-soft);
+    font-size: var(--text-sm);
+    margin: 0;
+  }
+
+  .phases {
+    display: grid;
+  }
+
+  .phase {
+    display: grid;
+    grid-template-columns: minmax(12rem, 1fr) 2.4fr;
+    gap: var(--space-8);
+    padding-block: var(--space-12);
+    border-top: var(--hairline);
+  }
+
+  .phase:last-child {
+    border-bottom: var(--hairline);
+  }
+
+  .phase-head {
+    display: flex;
+    gap: var(--space-4);
+    align-items: baseline;
+  }
+
+  .phase-no {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xl);
+    color: var(--vermillon);
+    line-height: 1;
+  }
+
+  .phase-head h3 {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-1);
+  }
+
+  .phase-duree {
+    color: var(--ink-faint);
+    font-size: var(--text-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .phase-intro {
+    font-size: var(--text-lg);
+    font-weight: 420;
+  }
+
+  .phase-points {
+    padding-left: 1.2rem;
+    margin: 0 0 var(--space-6);
+    max-width: var(--measure);
+  }
+
+  .phase-points li {
+    margin-bottom: var(--space-2);
+    color: var(--ink-soft);
+  }
+
+  .phase-points li::marker {
+    color: var(--vermillon);
+  }
+
+  .phase-meta {
+    display: grid;
+    gap: var(--space-4);
+    margin: 0;
+    border-top: var(--hairline);
+    padding-top: var(--space-6);
+    max-width: var(--measure);
+  }
+
+  .phase-meta dt {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--vermillon-ink);
+    margin-bottom: var(--space-1);
+  }
+
+  .phase-meta dd {
+    margin: 0;
+    font-size: var(--text-sm);
+  }
+
+  @media (max-width: 56rem) {
+    .principes {
+      grid-template-columns: 1fr;
+      gap: var(--space-8);
+    }
+
+    .phase {
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+    }
+  }
+</style>

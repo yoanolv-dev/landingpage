@@ -1,0 +1,72 @@
+---
+import Base from '@/layouts/Base.astro';
+import { site } from '@/config/site';
+
+const title = 'Politique de confidentialité';
+const description = `Politique de confidentialité du site ${site.brand} : données collectées, finalités, durées de conservation et droits des visiteurs.`;
+---
+
+<Base title={title} description={description} noindex>
+  <div class="container legal">
+    <h1>Politique de confidentialité</h1>
+    <p class="small">
+      Document à faire valider juridiquement avant la mise en production —
+      son contenu reflète le fonctionnement technique réel du site.
+    </p>
+
+    <h2>Le principe : minimisation</h2>
+    <p>
+      Ce site collecte le strict minimum. Il ne dépose <strong>aucun cookie</strong>,
+      n'embarque aucun pixel publicitaire et ne transmet aucune donnée de
+      navigation à des plateformes tierces. C'est pourquoi aucune bannière de
+      consentement n'est affichée : il n'y a rien à consentir.
+    </p>
+
+    <h2>Formulaire de contact</h2>
+    <p>
+      Les informations transmises via le formulaire (nom, email, description
+      du projet et champs facultatifs) servent uniquement à répondre à votre
+      demande. Elles ne sont ni revendues, ni utilisées pour de la
+      prospection automatisée, ni ajoutées à une liste de diffusion.
+    </p>
+    <p>
+      Base légale : mesures précontractuelles à votre demande (art. 6.1.b
+      RGPD). Durée de conservation : la durée de l'échange, puis au maximum
+      [À compléter : durée, ex. 24 mois] sans collaboration.
+    </p>
+
+    <h2>Mesure d'audience</h2>
+    <p>
+      Si une mesure d'audience est activée, elle utilise une solution sans
+      cookie ni identifiant individuel : les statistiques sont agrégées
+      (pages vues, provenances) et ne permettent pas de vous identifier.
+      Outil utilisé : [À compléter si un outil d'analytics est activé].
+    </p>
+
+    <h2>Vos droits</h2>
+    <p>
+      Vous disposez des droits d'accès, de rectification, d'effacement et
+      d'opposition sur vos données (art. 15 à 21 RGPD). Pour les exercer :
+      <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a>.
+      Vous pouvez également saisir la CNIL (cnil.fr).
+    </p>
+
+    <h2>Responsable de traitement</h2>
+    <p>
+      [À compléter : identité et coordonnées du responsable de traitement —
+      voir mentions légales.]
+    </p>
+  </div>
+</Base>
+
+<style>
+  .legal {
+    padding-block: clamp(3rem, 2rem + 4vw, 6rem);
+    max-width: var(--measure);
+  }
+
+  .legal h2 {
+    font-size: var(--text-xl);
+    margin-top: var(--space-12);
+  }
+</style>

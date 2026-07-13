@@ -1,0 +1,292 @@
+---
+import Base from '@/layouts/Base.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import BackstageToggle from '@/components/BackstageToggle.astro';
+import Annotation from '@/components/Annotation.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import { site } from '@/config/site';
+import { graph, webPage, breadcrumbs, article } from '@/lib/jsonld';
+
+const title = 'Étude de cas : concevoir la landing page d’un studio de landing pages';
+const description =
+  'Les décisions derrière ce site — positionnement, copywriting, direction artistique, technique, SEO — documentées comme pour un client. Et vérifiables : vous êtes dessus.';
+
+const path = '/realisations/ce-site/';
+const crumbs = [
+  { name: 'Accueil', path: '/' },
+  { name: 'Réalisations', path: '/realisations/' },
+  { name: 'Ce site', path },
+];
+
+const jsonLd = graph(
+  webPage({ path, title, description, datePublished: '2026-07-13', dateModified: '2026-07-13' }),
+  article({
+    path,
+    title,
+    description,
+    datePublished: '2026-07-13',
+    dateModified: '2026-07-13',
+  }),
+  breadcrumbs(crumbs)
+);
+
+const decisions = [
+  {
+    domaine: 'Positionnement',
+    decision: 'Vendre un « argumentaire construit », pas une « belle page »',
+    raison:
+      'Le marché entier promet des pages « qui convertissent » et « sur mesure » — les mots sont usés. Déplacer le terrain vers la méthode (stratégie, message, preuve, mesure) crée une catégorie où la comparaison nous est favorable.',
+    trace: 'Le titre du site oppose argumentaire à décoration ; la méthode occupe une page entière ; chaque offre est décrite en livrables.',
+  },
+  {
+    domaine: 'Copywriting',
+    decision: 'Bannir le vocabulaire de prestataire',
+    raison:
+      '« Propulser », « donner vie », « expérience digitale unique » : ces formules signalent un template mental. Leur absence est audible — c’est une preuve de compétence à moindres frais.',
+    trace: 'Cherchez une de ces formules sur ce site. La FAQ répond aux vraies objections (prix, délais, autonomie), pas à des questions promotionnelles.',
+  },
+  {
+    domaine: 'Direction artistique',
+    decision: 'Un système « papier, encre & vermillon » à contre-courant',
+    raison:
+      'Le secteur est saturé de fonds sombres, dégradés violets et glassmorphism. Un univers de document de travail — papier chaud, serif expressive, annotations au stylo — est mémorisable et raconte le métier : ici, on travaille le texte.',
+    trace: 'Une seule famille typographique (Fraunces variable), une couleur d’accent unique, des filets d’imprimeur, le folio numéroté des sections.',
+  },
+  {
+    domaine: 'Démonstration',
+    decision: 'Montrer plutôt que promettre : avant/après et mode coulisses',
+    raison:
+      'Un studio sans portfolio établi doit prouver autrement. La comparaison template/conçu fait constater l’écart en 30 secondes ; le mode coulisses expose le raisonnement — ce que ne peut pas faire un template.',
+    trace: 'La démonstration Meridiem (fictive et annoncée comme telle) sur la page d’accueil ; le bouton ✳ en bas à droite, y compris sur cette page.',
+  },
+  {
+    domaine: 'Preuve',
+    decision: 'Assumer l’absence de logos plutôt que la maquiller',
+    raison:
+      'Faux témoignages et compteurs gonflés sont la norme du bas de marché — et un risque mortel pour la crédibilité. Dire « pas de faux logos ici » transforme une faiblesse en signal d’exigence.',
+    trace: 'La section « La preuve » de l’accueil ; cette étude de cas elle-même, vérifiable puisque vous êtes dessus.',
+  },
+  {
+    domaine: 'Technique',
+    decision: 'Site statique généré (Astro), zéro framework côté client',
+    raison:
+      'Un site qui vend la performance doit être irréprochable : HTML complet au premier octet, JavaScript réduit à quelques îlots (menu, démonstration, checklist, formulaire), aucune dépendance lourde. La vitesse est un argument commercial ici.',
+    trace: 'Désactivez JavaScript : tout le contenu reste lisible. Une seule police auto-hébergée (~80 Ko), pas de scripts tiers, pas de cookies.',
+  },
+  {
+    domaine: 'SEO',
+    decision: 'Un écosystème resserré plutôt qu’une page unique',
+    raison:
+      'Les intentions « prix », « audit », « comment faire » et « prestataire » sont distinctes : les fusionner sur une page les ferait toutes échouer. Chaque URL du site répond à une intention, et une seule.',
+    trace: 'Accueil (transactionnel), tarifs (commercial), audit (transactionnel), guide (informationnel), checklist (actif partageable) — reliés par un maillage contextuel.',
+  },
+  {
+    domaine: 'Conversion',
+    decision: 'Un appel à l’action qui promet une suite précise',
+    raison:
+      '« Contactez-nous » fait peur : on ignore ce qui suit. « Présenter votre projet » + « réponse sous 24 h ouvrées, avis honnête même si c’est non » désamorce le risque perçu du clic.',
+    trace: 'La microcopie sous chaque bouton du site ; la page contact qui détaille les trois étapes suivantes.',
+  },
+];
+---
+
+<Base title={title} description={description} jsonLd={jsonLd} ogType="article">
+  <div class="container">
+    <header class="page-hero annotated">
+      <Breadcrumbs items={crumbs} />
+      <p class="kicker">Étude de cas nº 1</p>
+      <h1>Concevoir la landing page d'un studio de landing pages</h1>
+      <p class="lede">
+        C'est le brief le plus périlleux qui soit : le visiteur vient
+        précisément pour juger ce savoir-faire, sur pièce. Voici les décisions
+        prises pour ce site — documentées comme pour un client, et
+        vérifiables d'un clic puisque le livrable est sous vos yeux.
+      </p>
+      <Annotation margin>
+        Une étude de cas dont le lecteur peut auditer chaque affirmation :
+        c'est la preuve la plus honnête qu'un studio récent puisse produire.
+      </Annotation>
+    </header>
+
+    <section class="section" aria-labelledby="contexte-titre">
+      <div class="cas-meta">
+        <dl>
+          <div>
+            <dt>Le client</dt>
+            <dd>{site.brand}, studio indépendant — auto-commande.</dd>
+          </div>
+          <div>
+            <dt>Le problème</dt>
+            <dd>
+              Vendre de la conception de landing pages sans portfolio établi,
+              sur un marché saturé de promesses identiques.
+            </dd>
+          </div>
+          <div>
+            <dt>L'objectif</dt>
+            <dd>
+              Générer des demandes qualifiées et construire une autorité
+              organique durable sur la création de landing pages en France.
+            </dd>
+          </div>
+          <div>
+            <dt>La contrainte</dt>
+            <dd>
+              Interdiction absolue de preuves fabriquées : ni faux clients, ni
+              faux chiffres, ni faux témoignages. La page doit convaincre par
+              la démonstration.
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="decisions-titre">
+      <h2 id="decisions-titre">Huit décisions, et leurs raisons</h2>
+      <p class="lede">
+        Un projet de landing page est une suite de décisions argumentées.
+        Voici les principales de celui-ci — chacune avec sa trace visible,
+        pour vérification immédiate.
+      </p>
+      <ol class="list-plain decisions">
+        {
+          decisions.map((d, i) => (
+            <li class="decision reveal">
+              <header>
+                <span class="decision-no" aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <p class="decision-domaine mono">{d.domaine}</p>
+                <h3>{d.decision}</h3>
+              </header>
+              <p class="decision-raison">{d.raison}</p>
+              <p class="decision-trace">
+                <span class="mono trace-label">Vérifiable —</span> {d.trace}
+              </p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="section band--paper-deep" aria-labelledby="resultats-titre">
+      <div class="resultats">
+        <h2 id="resultats-titre">Et les résultats ?</h2>
+        <p>
+          Ils seront publiés ici, chiffrés, après une période de mesure
+          réelle : trafic organique, positions sur les requêtes visées, taux
+          de demande de contact. Pas avant — cette page ne contiendra jamais
+          un chiffre qu'elle ne peut pas prouver. C'est aussi cela, traiter
+          une landing page comme un actif : accepter d'être jugé sur des
+          données.
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <CtaBand
+    title="Votre projet, documenté avec la même exigence"
+    text="Chaque projet client suit la même méthode que celui-ci : décisions argumentées, livrables validés, mesure installée. Présentez le vôtre en trois phrases."
+  />
+
+  <BackstageToggle />
+</Base>
+
+<style>
+  .page-hero {
+    padding-block: clamp(3rem, 2rem + 4vw, 6rem) 0;
+    max-width: 52rem;
+  }
+
+  .cas-meta dl {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-8);
+    margin: 0;
+    max-width: 52rem;
+  }
+
+  .cas-meta dt {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--vermillon-ink);
+    margin-bottom: var(--space-2);
+  }
+
+  .cas-meta dd {
+    margin: 0;
+  }
+
+  .decisions {
+    display: grid;
+    gap: 0;
+    max-width: 52rem;
+    margin-top: var(--space-8);
+  }
+
+  .decision {
+    padding-block: var(--space-8);
+    border-top: var(--hairline);
+  }
+
+  .decision:last-child {
+    border-bottom: var(--hairline);
+  }
+
+  .decision header {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: var(--space-1) var(--space-4);
+    align-items: baseline;
+    margin-bottom: var(--space-4);
+  }
+
+  .decision-no {
+    font-family: var(--font-mono);
+    color: var(--vermillon);
+    font-size: var(--text-lg);
+    grid-row: span 2;
+  }
+
+  .decision-domaine {
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0;
+  }
+
+  .decision h3 {
+    margin: 0;
+    font-size: var(--text-xl);
+  }
+
+  .decision-raison {
+    color: var(--ink-soft);
+    margin-bottom: var(--space-3);
+  }
+
+  .decision-trace {
+    font-size: var(--text-sm);
+    margin: 0;
+  }
+
+  .trace-label {
+    color: var(--vermillon-ink);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: var(--text-xs);
+  }
+
+  .resultats {
+    max-width: var(--measure);
+  }
+
+  @media (max-width: 40rem) {
+    .cas-meta dl {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

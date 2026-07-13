@@ -1,0 +1,901 @@
+---
+import Base from '@/layouts/Base.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import CompareDemo from '@/components/CompareDemo.astro';
+import Annotation from '@/components/Annotation.astro';
+import BackstageToggle from '@/components/BackstageToggle.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import Faq from '@/components/Faq.astro';
+import { site, formatPriceRange } from '@/config/site';
+import { graph, webPage, service, faqPage } from '@/lib/jsonld';
+
+const title = `Création de landing page sur mesure — ${site.brand}, studio indépendant`;
+const description =
+  'Studio indépendant de création de landing pages sur mesure : stratégie, copywriting, design et développement. Des pages construites pour convertir, livrées prêtes à mesurer.';
+
+const faqItems = [
+  {
+    q: 'Combien coûte une landing page sur mesure ?',
+    a: `<p>Cela dépend du périmètre : page seule ou page plus déclinaisons, copywriting à produire ou à retravailler, intégrations nécessaires. Les fourchettes pratiquées et surtout <em>ce qui fait varier le prix</em> sont détaillés en toute transparence sur la <a href="/tarifs/">page tarifs</a>. Vous recevez toujours un devis fermé avant tout engagement.</p>`,
+  },
+  {
+    q: 'Combien de temps prend la création ?',
+    a: `<p>Comptez ${site.commitments.projectLeadTime} entre le premier entretien et la mise en ligne. Le calendrier précis est posé dès le devis, étape par étape, et vous savez à tout moment où en est le projet.</p>`,
+  },
+  {
+    q: 'Dois-je fournir les textes ?',
+    a: `<p>Non — c'est même l'inverse. Le copywriting fait partie du travail : le message est construit à partir d'un entretien sur votre offre, vos clients et leurs objections. Vous relisez, corrigez, validez. Si vous avez déjà des textes, ils servent de matière première.</p>`,
+  },
+  {
+    q: 'Pourrai-je modifier la page ensuite ?',
+    a: `<p>Oui. La page vous appartient entièrement : code, contenus, design. Selon vos besoins, elle est livrée avec des contenus éditables et une documentation de prise en main, ou avec un accompagnement de maintenance. Rien n'est verrouillé chez un prestataire.</p>`,
+  },
+  {
+    q: 'La page sera-t-elle bien référencée ?',
+    a: `<p>Elle sera construite pour cela : rendu HTML complet, balisage sémantique, métadonnées propres, données structurées, temps de chargement maîtrisé. Le référencement d'une page dépend ensuite de la concurrence et de votre autorité globale — c'est expliqué honnêtement, sans promesse de position.</p>`,
+  },
+  {
+    q: 'Et si je ne sais pas si j’ai besoin d’une landing page ?',
+    a: `<p>C'est une vraie question, et la réponse est parfois non. Un <a href="/audit-landing-page/">audit de l'existant</a> ou un simple échange permet de trancher. Si votre problème relève d'autre chose — offre, trafic, cible — vous le saurez dès le premier retour.</p>`,
+  },
+  {
+    q: 'Travaillez-vous à distance ?',
+    a: `<p>Oui, pour toute la France et les pays francophones. Les entretiens se font en visio, l'avancement se suit sur des pages de travail partagées, et chaque étape est validée par écrit.</p>`,
+  },
+];
+
+const jsonLd = graph(
+  webPage({ path: '/', title, description }),
+  service({
+    path: '/',
+    name: 'Création de landing page sur mesure',
+    description:
+      'Conception complète de landing pages : stratégie, copywriting, design, développement et plan de mesure.',
+  }),
+  faqPage(
+    faqItems.map(({ q, a }) => ({ q, a: a.replace(/<[^>]+>/g, '') }))
+  )
+);
+
+const offres = [
+  {
+    no: 'A',
+    name: 'Création complète',
+    who: 'Pour lancer une offre, un produit ou une campagne sur une base neuve.',
+    deliverable:
+      'Stratégie, copywriting, design, développement, plan de mesure. Une page prête à recevoir du trafic.',
+    time: site.commitments.projectLeadTime,
+    price: formatPriceRange(site.pricing.creation),
+    href: '/methode/',
+    linkLabel: 'Voir la méthode complète',
+  },
+  {
+    no: 'B',
+    name: 'Refonte',
+    who: 'Pour une page existante qui ne convertit pas à la hauteur de son trafic.',
+    deliverable:
+      'Diagnostic de l’existant, reformulation du message, nouvelle conception — en gardant ce qui fonctionne.',
+    time: site.commitments.projectLeadTime,
+    price: formatPriceRange(site.pricing.refonte),
+    href: '/audit-landing-page/',
+    linkLabel: 'Audit & refonte',
+  },
+  {
+    no: 'C',
+    name: 'Audit seul',
+    who: 'Pour comprendre ce qui bloque avant d’investir dans une refonte.',
+    deliverable:
+      'Analyse en 40 points — message, structure, friction, vitesse, SEO — et rapport priorisé, actionnable par n’importe quel prestataire.',
+    time: site.commitments.auditLeadTime,
+    price: formatPriceRange(site.pricing.audit),
+    href: '/audit-landing-page/',
+    linkLabel: 'Détail de l’audit',
+  },
+];
+
+const sommaire = [
+  { no: '01', label: 'Le problème', desc: 'Pourquoi tant de pages ne convertissent pas', href: '#probleme' },
+  { no: '02', label: 'La démonstration', desc: 'La même offre, avant et après conception', href: '#demonstration' },
+  { no: '03', label: 'La méthode', desc: 'Cinq étapes, cinq livrables', href: '#methode' },
+  { no: '04', label: 'Les offres', desc: 'Création, refonte, audit', href: '#offres' },
+  { no: '05', label: 'Les réponses', desc: 'Ce que vous vous demandez déjà', href: '#reponses' },
+];
+
+const etapes = [
+  {
+    name: 'Comprendre',
+    text: 'Un entretien approfondi sur votre offre, vos clients et leurs objections. La page se gagne ici, pas dans l’éditeur.',
+    livrable: 'Brief stratégique validé',
+  },
+  {
+    name: 'Formuler',
+    text: 'Le message avant la maquette : promesse, arguments, preuves, appels à l’action. Chaque phrase a un rôle.',
+    livrable: 'Copywriting intégral de la page',
+  },
+  {
+    name: 'Concevoir',
+    text: 'Hiérarchie, rythme, direction artistique. Le design met en scène l’argumentaire — jamais l’inverse.',
+    livrable: 'Maquette navigable, desktop et mobile',
+  },
+  {
+    name: 'Construire',
+    text: 'Développement sur mesure : rapide, accessible, indexable. Sans dépendance à un abonnement propriétaire.',
+    livrable: 'Page en production sur votre domaine',
+  },
+  {
+    name: 'Mesurer',
+    text: 'Événements de conversion en place, lecture des premiers résultats, recommandations d’itération.',
+    livrable: 'Plan de mesure et bilan à 30 jours',
+  },
+];
+---
+
+<Base title={title} description={description} jsonLd={jsonLd} brandInTitle={false}>
+  <!-- ============ HERO ============ -->
+  <section class="hero annotated" aria-label="Introduction">
+    <div class="container hero-grid">
+      <div class="hero-main">
+        <p class="kicker">Studio indépendant · France, à distance</p>
+        <h1>
+          Votre prochaine landing page, construite comme un
+          <em>argumentaire de vente</em><a
+            href="#colophon-note"
+            class="footnote-call"
+            id="appel-note"
+            aria-label="Note : cette page applique ce qu'elle promet">✳</a
+          >
+        </h1>
+        <p class="lede">
+          {site.brand} conçoit des <strong>landing pages sur mesure</strong> —
+          stratégie, message, design et développement assemblés par un seul
+          interlocuteur — pour transformer votre offre en une page claire,
+          crédible, et faite pour provoquer la décision.
+        </p>
+        <div class="hero-actions">
+          <a href={site.cta.href} class="btn" data-track="cta-hero">
+            {site.cta.label} <span class="arrow" aria-hidden="true">→</span>
+          </a>
+          <a href="/methode/" class="btn btn--ghost">Lire la méthode</a>
+        </div>
+        <p class="btn-note">
+          Sans engagement — {site.commitments.responseTime}, avec un premier
+          avis honnête. Même si c'est « non ».
+        </p>
+      </div>
+
+      <aside class="cartouche" aria-label="Fiche de mission résumée">
+        <dl>
+          <div><dt>Objet</dt><dd>Landing page sur mesure</dd></div>
+          <div><dt>Périmètre</dt><dd>Stratégie · Texte · Design · Code</dd></div>
+          <div><dt>Délai</dt><dd>{site.commitments.projectLeadTime}</dd></div>
+          <div><dt>Interlocuteur</dt><dd>Un seul, du brief à la mise en ligne</dd></div>
+          <div><dt>Suite</dt><dd>{site.commitments.responseTime}</dd></div>
+        </dl>
+      </aside>
+
+      <Annotation margin>
+        Ce titre ne dit pas « belle page » : il oppose <em>argumentaire</em> à
+        <em>décoration</em>. C'est le repositionnement que la page entière va
+        démontrer. Le mot-clé métier reste présent, mais au service du sens.
+      </Annotation>
+    </div>
+  </section>
+
+  <!-- ============ SOMMAIRE ============ -->
+  <nav class="sommaire annotated" aria-label="Sommaire de la page">
+    <div class="container">
+      <ol class="list-plain sommaire-list">
+        {
+          sommaire.map((item) => (
+            <li>
+              <a href={item.href}>
+                <span class="section-no">{item.no}</span>
+                <span class="sommaire-label">{item.label}</span>
+                <span class="sommaire-desc">{item.desc}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+      <Annotation margin>
+        Un sommaire sur une landing page ? Quand une page est longue, annoncer
+        sa structure réduit le coût du défilement : chaque entrée devient une
+        promesse de réponse. C'est aussi un plan sémantique lisible par les
+        moteurs de recherche.
+      </Annotation>
+    </div>
+  </nav>
+
+  <!-- ============ 01 LE PROBLÈME ============ -->
+  <section class="section" id="probleme" aria-labelledby="probleme-titre">
+    <div class="container annotated">
+      <SectionHead
+        no="01"
+        kicker="Le problème"
+        title="La plupart des landing pages sont des décors. La vôtre doit être un vendeur."
+      />
+      <div class="probleme-grid">
+        <div>
+          <p class="lede">
+            Ouvrez dix pages de votre secteur : mêmes formules
+            interchangeables, mêmes trois cartes à icônes, même bouton
+            « En savoir plus » qui ne promet rien. Ces pages ne manquent pas
+            d'esthétique. Elles manquent de <strong>travail commercial</strong>.
+          </p>
+        </div>
+        <ul class="list-plain probleme-list">
+          <li>
+            <h3>Un message qui ne tranche rien</h3>
+            <p>
+              Si le titre peut convenir à un concurrent, il ne défend personne.
+              Une page convertit quand elle nomme le problème du visiteur mieux
+              que lui.
+            </p>
+          </li>
+          <li>
+            <h3>Une structure décorative</h3>
+            <p>
+              Des sections posées parce que « ça se fait », pas parce qu'elles
+              répondent à une objection. Le visiteur défile, ne trouve pas sa
+              question, referme.
+            </p>
+          </li>
+          <li>
+            <h3>Aucune preuve organisée</h3>
+            <p>
+              Les éléments de crédibilité existent presque toujours — méthode,
+              détails, garanties — mais ils ne sont ni cherchés ni mis en
+              scène.
+            </p>
+          </li>
+          <li>
+            <h3>Rien n'est mesuré</h3>
+            <p>
+              Sans événements de conversion, impossible de savoir ce qui
+              bloque. La page reste un pari au lieu de devenir un actif qui
+              s'améliore.
+            </p>
+          </li>
+        </ul>
+      </div>
+      <Annotation margin>
+        Cette section ne critique pas des concurrents : elle donne au lecteur
+        les mots de son propre diagnostic. S'il se reconnaît, la suite de la
+        page devient la réponse à <em>son</em> problème.
+      </Annotation>
+    </div>
+  </section>
+
+  <!-- ============ 02 LA DÉMONSTRATION ============ -->
+  <section class="section band--paper-deep" id="demonstration" aria-labelledby="demonstration-titre">
+    <div class="container annotated">
+      <SectionHead
+        no="02"
+        kicker="La démonstration"
+        title="La même offre, deux pages. Regardez ce que change la conception."
+        lede="Plutôt que de vous le raconter, voici l'écart entre une page « remplie » et une page conçue — sur un exemple volontairement fictif."
+      />
+      <CompareDemo />
+      <div class="backstage-invite">
+        <p>
+          <strong>Et cette page-ci ?</strong> Elle s'applique le même
+          traitement. Le bouton
+          <span class="mono">✳ Voir les coulisses</span> (en bas à droite)
+          révèle les décisions de conception derrière chaque section — le
+          document de travail, à même la page.
+        </p>
+      </div>
+      <Annotation margin>
+        Une démonstration vaut mieux qu'une liste de bénéfices : elle laisse
+        le visiteur constater l'écart lui-même. L'exemple est fictif et
+        annoncé comme tel — la crédibilité ne se négocie pas.
+      </Annotation>
+    </div>
+  </section>
+
+  <!-- ============ 03 LA MÉTHODE ============ -->
+  <section class="section" id="methode" aria-labelledby="methode-titre">
+    <div class="container annotated">
+      <SectionHead
+        no="03"
+        kicker="La méthode"
+        title="Cinq étapes. Cinq livrables. Zéro improvisation."
+        lede="Chaque étape se termine par un livrable concret que vous validez. Vous savez toujours ce qui a été décidé, pourquoi, et ce qui vient ensuite."
+      />
+      <ol class="list-plain etapes">
+        {
+          etapes.map((etape, i) => (
+            <li class="etape reveal">
+              <span class="etape-no" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <div>
+                <h3>{etape.name}</h3>
+                <p>{etape.text}</p>
+                <p class="etape-livrable">
+                  <span class="mono">Livrable —</span> {etape.livrable}
+                </p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="methode-more">
+        <a href="/methode/">La méthode en détail, étape par étape →</a>
+      </p>
+      <Annotation margin>
+        Détailler la méthode répond à trois objections d'un coup : « que
+        vais-je recevoir ? », « vais-je devoir tout écrire ? », « comment
+        saurai-je où en est le projet ? ». La transparence est un argument.
+      </Annotation>
+    </div>
+  </section>
+
+  <!-- ============ 04 LES OFFRES ============ -->
+  <section class="section" id="offres" aria-labelledby="offres-titre">
+    <div class="container annotated">
+      <SectionHead
+        no="04"
+        kicker="Les offres"
+        title="Trois façons de travailler ensemble"
+        lede="Selon que vous partez de zéro, d'une page qui déçoit, ou d'un simple doute."
+      />
+      <div class="offres">
+        {
+          offres.map((offre) => (
+            <article class="offre reveal">
+              <div class="offre-head">
+                <span class="offre-no" aria-hidden="true">
+                  {offre.no}
+                </span>
+                <h3>{offre.name}</h3>
+              </div>
+              <p class="offre-who">{offre.who}</p>
+              <p class="offre-livrable">{offre.deliverable}</p>
+              <dl class="offre-meta">
+                <div>
+                  <dt>Délai</dt>
+                  <dd>{offre.time}</dd>
+                </div>
+                {offre.price && (
+                  <div>
+                    <dt>Fourchette indicative</dt>
+                    <dd>{offre.price}</dd>
+                  </div>
+                )}
+              </dl>
+              <a href={offre.href}>{offre.linkLabel} →</a>
+            </article>
+          ))
+        }
+      </div>
+      <p class="offres-note">
+        Les fourchettes sont indicatives ; chaque projet reçoit un devis fermé
+        après le premier échange. Ce qui fait varier le prix est expliqué sur
+        la <a href="/tarifs/">page tarifs</a>.
+      </p>
+      <Annotation margin>
+        Afficher des fourchettes filtre les projets incompatibles et rassure
+        les autres : le silence sur les prix est la première friction des
+        pages de prestataires. La transparence coûte moins cher qu'un rendez-vous inutile.
+      </Annotation>
+    </div>
+  </section>
+
+  <!-- ============ POUR QUI ============ -->
+  <section class="section band--ink" aria-labelledby="pourqui-titre">
+    <div class="container">
+      <SectionHead
+        kicker="Pour qui"
+        title="Vous vous reconnaîtrez peut-être ici"
+      />
+      <ul class="list-plain situations">
+        <li>
+          <p class="situation-cas">Vous lancez une offre ou un produit</p>
+          <p class="situation-reponse">
+            La page fonde votre crédibilité avant vos premiers clients —
+            <a href="/methode/">création complète</a>.
+          </p>
+        </li>
+        <li>
+          <p class="situation-cas">Votre page reçoit du trafic mais ne convertit pas</p>
+          <p class="situation-reponse">
+            Le diagnostic vient avant la refonte —
+            <a href="/audit-landing-page/">audit en 40 points</a>.
+          </p>
+        </li>
+        <li>
+          <p class="situation-cas">Vous préparez une campagne payante</p>
+          <p class="situation-reponse">
+            Chaque clic acheté mérite une page à sa hauteur —
+            <a href="/tarifs/">voir les périmètres</a>.
+          </p>
+        </li>
+        <li>
+          <p class="situation-cas">Votre image en ligne ne reflète plus votre niveau</p>
+          <p class="situation-reponse">
+            Consultants, SaaS, cabinets, formations : la page doit égaler la
+            prestation — <a href="/contact/">parlons-en</a>.
+          </p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ 05 LES RÉPONSES ============ -->
+  <section class="section" id="reponses" aria-labelledby="reponses-titre">
+    <div class="container annotated">
+      <SectionHead
+        no="05"
+        kicker="Les réponses"
+        title="Ce que vous vous demandez déjà"
+      />
+      <Faq items={faqItems} />
+      <Annotation margin>
+        Ces questions viennent des objections réelles d'un premier échange :
+        prix, délai, autonomie, propriété. Y répondre ici fait gagner un
+        rendez-vous à tout le monde — et structure des réponses directes pour
+        les moteurs.
+      </Annotation>
+    </div>
+  </section>
+
+  <!-- ============ PREUVES HONNÊTES ============ -->
+  <section class="section" aria-labelledby="preuves-titre">
+    <div class="container annotated">
+      <SectionHead
+        kicker="La preuve"
+        title="Pas de faux logos. Une démonstration."
+        lede="Ce studio est récent sous cette forme — vous ne trouverez ici ni logos gonflés, ni témoignages invérifiables, ni compteurs de projets."
+      />
+      <div class="preuves">
+        <a class="preuve reveal" href="/realisations/ce-site/">
+          <span class="kicker">Étude de cas nº 1</span>
+          <h3>Ce site, en toute transparence</h3>
+          <p>
+            Positionnement, copywriting, design, technique : toutes les
+            décisions derrière la page que vous lisez, documentées comme pour
+            un client.
+          </p>
+          <span class="preuve-more">Lire l'étude de cas →</span>
+        </a>
+        <a class="preuve reveal" href="/checklist-landing-page/">
+          <span class="kicker">Outil libre d'accès</span>
+          <h3>La checklist des 40 points</h3>
+          <p>
+            La grille d'audit utilisée sur les projets, en version
+            interactive. Évaluez votre propre page — sans email demandé.
+          </p>
+          <span class="preuve-more">Auditer ma page →</span>
+        </a>
+      </div>
+      <Annotation margin>
+        Montrer l'absence de preuves sociales plutôt que la maquiller : la
+        transparence crée plus de confiance qu'un bandeau de logos que
+        personne ne vérifie. Les emplacements pour preuves réelles existent —
+        ils se rempliront de projets réels.
+      </Annotation>
+    </div>
+  </section>
+
+  <CtaBand />
+
+  <!-- note de bas de page du hero -->
+  <div class="container">
+    <p class="footnote" id="colophon-note">
+      <span class="asterisk" aria-hidden="true">✳</span> Cette page applique
+      ce qu'elle vous promet : un message qui tranche, une structure qui
+      répond aux objections, une démonstration, des preuves honnêtes et un
+      appel à l'action sans ambiguïté.
+      <a href="#appel-note" aria-label="Revenir à l'appel de note">↩</a>
+    </p>
+  </div>
+
+  <BackstageToggle />
+</Base>
+
+<style>
+  /* ---------- Hero ---------- */
+  .hero {
+    padding-block: clamp(4rem, 3rem + 6vw, 8rem) clamp(3rem, 2rem + 4vw, 6rem);
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(16rem, 1fr);
+    gap: var(--space-12);
+    align-items: start;
+  }
+
+  .hero h1 {
+    margin-bottom: var(--space-8);
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--vermillon-ink);
+  }
+
+  .footnote-call {
+    font-size: 0.45em;
+    vertical-align: super;
+    text-decoration: none;
+    color: var(--vermillon);
+    margin-left: 0.15em;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-top: var(--space-8);
+  }
+
+  /* Cartouche — fiche de mission façon document technique */
+  .cartouche {
+    border: 1px solid var(--ink);
+    background: var(--paper);
+    padding: var(--space-6);
+    font-size: var(--text-sm);
+    margin-top: var(--space-4);
+  }
+
+  .cartouche dl {
+    margin: 0;
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .cartouche dt {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--vermillon-ink);
+    margin-bottom: var(--space-1);
+  }
+
+  .cartouche dd {
+    margin: 0;
+    font-weight: 480;
+  }
+
+  /* ---------- Sommaire ---------- */
+  .sommaire {
+    border-top: var(--hairline);
+    border-bottom: var(--hairline);
+    background: var(--paper);
+  }
+
+  .sommaire-list {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .sommaire-list li + li {
+    border-left: var(--hairline);
+  }
+
+  .sommaire-list a {
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-6) var(--space-4);
+    text-decoration: none;
+    transition: background var(--speed) var(--ease);
+  }
+
+  .sommaire-list a:hover {
+    background: var(--paper-deep);
+    color: inherit;
+  }
+
+  .sommaire-label {
+    font-weight: 600;
+    font-variation-settings: 'opsz' 30;
+  }
+
+  .sommaire-desc {
+    font-size: var(--text-sm);
+    color: var(--ink-soft);
+  }
+
+  /* ---------- 01 Problème ---------- */
+  .probleme-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: var(--space-12);
+  }
+
+  .probleme-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-8) var(--space-12);
+  }
+
+  .probleme-list h3 {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-2);
+  }
+
+  .probleme-list p {
+    font-size: var(--text-sm);
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  /* ---------- 02 Démonstration ---------- */
+  .backstage-invite {
+    margin-top: var(--space-8);
+    max-width: var(--measure);
+  }
+
+  .backstage-invite p {
+    margin: 0;
+    padding: var(--space-4) var(--space-6);
+    border-left: 2px solid var(--vermillon);
+    background: color-mix(in srgb, var(--vermillon) 6%, transparent);
+  }
+
+  /* ---------- 03 Méthode ---------- */
+  .etapes {
+    display: grid;
+    gap: 0;
+    max-width: 52rem;
+  }
+
+  .etape {
+    display: grid;
+    grid-template-columns: 4rem 1fr;
+    gap: var(--space-6);
+    padding-block: var(--space-8);
+    border-top: var(--hairline);
+  }
+
+  .etape:last-child {
+    border-bottom: var(--hairline);
+  }
+
+  .etape-no {
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    color: var(--vermillon);
+  }
+
+  .etape h3 {
+    margin-bottom: var(--space-2);
+  }
+
+  .etape p {
+    color: var(--ink-soft);
+    margin-bottom: var(--space-2);
+  }
+
+  .etape-livrable {
+    font-size: var(--text-sm);
+    color: var(--ink);
+  }
+
+  .etape-livrable .mono {
+    color: var(--vermillon-ink);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: var(--text-xs);
+  }
+
+  .methode-more {
+    margin-top: var(--space-8);
+    font-weight: 520;
+  }
+
+  /* ---------- 04 Offres ---------- */
+  .offres {
+    display: grid;
+    gap: 0;
+  }
+
+  .offre {
+    display: grid;
+    grid-template-columns: minmax(12rem, 1fr) 1.4fr 1fr auto;
+    gap: var(--space-6) var(--space-8);
+    align-items: start;
+    padding-block: var(--space-8);
+    border-top: var(--hairline);
+  }
+
+  .offre:last-child {
+    border-bottom: var(--hairline);
+  }
+
+  .offre-head {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+  }
+
+  .offre-no {
+    font-family: var(--font-mono);
+    color: var(--vermillon);
+    font-size: var(--text-sm);
+  }
+
+  .offre h3 {
+    margin: 0;
+  }
+
+  .offre-who {
+    color: var(--ink-soft);
+    font-size: var(--text-sm);
+    margin: var(--space-2) 0 0;
+  }
+
+  .offre-livrable {
+    font-size: var(--text-sm);
+    margin: 0;
+  }
+
+  .offre-meta {
+    margin: 0;
+    display: grid;
+    gap: var(--space-3);
+    font-size: var(--text-sm);
+  }
+
+  .offre-meta dt {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .offre-meta dd {
+    margin: 0;
+    font-weight: 520;
+  }
+
+  .offre > a {
+    font-weight: 520;
+    white-space: nowrap;
+    align-self: center;
+  }
+
+  .offres-note {
+    margin-top: var(--space-6);
+    font-size: var(--text-sm);
+    color: var(--ink-soft);
+  }
+
+  /* ---------- Pour qui ---------- */
+  .situations {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-8) var(--space-12);
+  }
+
+  .situation-cas {
+    font-size: var(--text-xl);
+    font-weight: 560;
+    font-variation-settings: 'opsz' 40;
+    line-height: 1.2;
+    margin-bottom: var(--space-2);
+    text-wrap: balance;
+  }
+
+  .situation-reponse {
+    color: var(--on-ink-soft);
+    margin: 0;
+  }
+
+  /* ---------- Preuves ---------- */
+  .preuves {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-8);
+  }
+
+  .preuve {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+    padding: var(--space-8);
+    border: 1px solid var(--ink);
+    text-decoration: none;
+    transition: background var(--speed) var(--ease);
+  }
+
+  .preuve:hover {
+    background: var(--paper-deep);
+    color: inherit;
+  }
+
+  .preuve h3 {
+    margin: 0;
+  }
+
+  .preuve p {
+    color: var(--ink-soft);
+    font-size: var(--text-sm);
+    margin: 0;
+  }
+
+  .preuve-more {
+    font-weight: 520;
+    color: var(--vermillon-ink);
+  }
+
+  /* ---------- Note de bas de page ---------- */
+  .footnote {
+    max-width: var(--measure);
+    font-size: var(--text-sm);
+    font-style: italic;
+    color: var(--ink-soft);
+    padding-block: var(--space-8);
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 64rem) {
+    .sommaire-list {
+      grid-template-columns: 1fr;
+    }
+
+    .sommaire-list li + li {
+      border-left: 0;
+      border-top: var(--hairline);
+    }
+
+    .sommaire-list a {
+      grid-template-columns: 3rem 1fr;
+      align-items: baseline;
+    }
+
+    .sommaire-desc {
+      grid-column: 2;
+    }
+
+    .offre {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .offre > a {
+      justify-self: start;
+      align-self: end;
+    }
+  }
+
+  @media (max-width: 56rem) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-8);
+    }
+
+    .cartouche {
+      max-width: 26rem;
+    }
+
+    .probleme-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-8);
+    }
+
+    .situations,
+    .preuves {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .probleme-list {
+      grid-template-columns: 1fr;
+    }
+
+    .offre {
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+    }
+
+    .etape {
+      grid-template-columns: 2.6rem 1fr;
+      gap: var(--space-4);
+    }
+  }
+</style>

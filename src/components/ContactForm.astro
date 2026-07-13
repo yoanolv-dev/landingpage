@@ -1,0 +1,264 @@
+---
+/**
+ * Formulaire de qualification.
+ * - Validation HTML native + messages personnalisés en français.
+ * - Anti-spam sans friction : honeypot + délai minimal de remplissage.
+ * - Envoi vers PUBLIC_FORM_ENDPOINT (POST JSON) si configuré ;
+ *   sinon, repli propre vers un email pré-rempli (mailto).
+ * Aucun secret côté client, aucune donnée envoyée à un tiers par défaut.
+ */
+import { site } from '@/config/site';
+
+const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
+---
+
+<form id="contact-form" novalidate data-endpoint={endpoint} data-email={site.contact.email}>
+  <div class="field">
+    <label for="f-nom">Votre nom</label>
+    <input id="f-nom" name="nom" type="text" autocomplete="name" required maxlength="120" />
+    <p class="field-error" id="err-nom" hidden>Indiquez votre nom pour que la réponse vous soit adressée.</p>
+  </div>
+
+  <div class="field">
+    <label for="f-email">Votre email</label>
+    <input id="f-email" name="email" type="email" autocomplete="email" required maxlength="200" inputmode="email" />
+    <p class="field-error" id="err-email" hidden>Un email valide est nécessaire pour vous répondre.</p>
+  </div>
+
+  <div class="field">
+    <label for="f-activite">Votre activité <span class="optionnel">— facultatif</span></label>
+    <p class="hint" id="hint-activite">Entreprise, produit ou service concerné par la page.</p>
+    <input id="f-activite" name="activite" type="text" autocomplete="organization" maxlength="200" aria-describedby="hint-activite" />
+  </div>
+
+  <div class="field">
+    <label for="f-url">Page ou site actuel <span class="optionnel">— facultatif</span></label>
+    <input id="f-url" name="url" type="url" placeholder="https://…" maxlength="300" inputmode="url" />
+    <p class="field-error" id="err-url" hidden>L'adresse doit commencer par http(s)://</p>
+  </div>
+
+  <div class="field">
+    <label for="f-besoin">Votre besoin</label>
+    <select id="f-besoin" name="besoin" required>
+      <option value="">Choisir…</option>
+      <option value="creation">Créer une landing page</option>
+      <option value="refonte">Refondre une page existante</option>
+      <option value="audit">Auditer une page existante</option>
+      <option value="autre">Autre / je ne sais pas encore</option>
+    </select>
+    <p class="field-error" id="err-besoin" hidden>Choisissez la situation la plus proche — « je ne sais pas encore » est une vraie option.</p>
+  </div>
+
+  <div class="field">
+    <label for="f-projet">Votre projet, en quelques lignes</label>
+    <p class="hint" id="hint-projet">
+      Ce que vous vendez, à qui, et ce que la page doit obtenir. Trois phrases
+      suffisent pour un premier avis utile.
+    </p>
+    <textarea id="f-projet" name="projet" required minlength="30" maxlength="3000" aria-describedby="hint-projet"></textarea>
+    <p class="field-error" id="err-projet" hidden>Quelques lignes de contexte (30 caractères minimum) permettent une réponse réellement utile.</p>
+  </div>
+
+  <div class="field">
+    <label for="f-budget">Budget envisagé <span class="optionnel">— facultatif</span></label>
+    <select id="f-budget" name="budget">
+      <option value="">Je préfère en discuter</option>
+      <option value="moins-2500">Moins de 2 500 €</option>
+      <option value="2500-5000">2 500 à 5 000 €</option>
+      <option value="plus-5000">Plus de 5 000 €</option>
+    </select>
+  </div>
+
+  <!-- Anti-spam : champ invisible pour les humains -->
+  <div class="hp" aria-hidden="true">
+    <label for="f-site-web">Ne pas remplir</label>
+    <input id="f-site-web" name="site_web" type="text" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <button type="submit" class="btn" data-track="formulaire-envoi">
+    Envoyer ma demande <span class="arrow" aria-hidden="true">→</span>
+  </button>
+  <p class="btn-note">
+    Vos informations servent uniquement à vous répondre — ni newsletter, ni
+    revente, ni relance automatisée. <a href="/confidentialite/">Détails</a>.
+  </p>
+
+  <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+
+  <div class="form-fallback" id="form-fallback" hidden>
+    <p>
+      L'envoi direct est momentanément indisponible. Votre message est prêt —
+      envoyez-le en un clic depuis votre messagerie :
+    </p>
+    <a class="btn btn--ghost" id="fallback-mailto" href={`mailto:${site.contact.email}`}>
+      Ouvrir ma messagerie
+    </a>
+  </div>
+</form>
+
+<style>
+  form {
+    max-width: 38rem;
+  }
+
+  .optionnel {
+    font-weight: 380;
+    color: var(--ink-faint);
+    font-size: var(--text-sm);
+  }
+
+  .hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .form-status {
+    margin-top: var(--space-6);
+    font-weight: 520;
+  }
+
+  .form-status.is-error {
+    color: var(--vermillon-ink);
+  }
+
+  .form-status.is-success {
+    padding: var(--space-6);
+    border-left: 2px solid var(--vermillon);
+    background: color-mix(in srgb, var(--vermillon) 6%, transparent);
+  }
+
+  .form-fallback {
+    margin-top: var(--space-6);
+    padding: var(--space-6);
+    border: var(--hairline);
+    background: var(--paper-deep);
+  }
+
+  button[disabled] {
+    opacity: 0.6;
+    cursor: wait;
+  }
+</style>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement;
+  const status = document.getElementById('form-status') as HTMLElement;
+  const fallback = document.getElementById('form-fallback') as HTMLElement;
+  const mailtoLink = document.getElementById('fallback-mailto') as HTMLAnchorElement;
+  const endpoint = form.dataset.endpoint || '';
+  const email = form.dataset.email || '';
+  const openedAt = Date.now();
+
+  const fields: [string, () => boolean][] = [
+    ['nom', () => (form.elements.namedItem('nom') as HTMLInputElement).value.trim().length > 0],
+    ['email', () => (form.elements.namedItem('email') as HTMLInputElement).checkValidity()],
+    [
+      'url',
+      () => {
+        const el = form.elements.namedItem('url') as HTMLInputElement;
+        return el.value.trim() === '' || el.checkValidity();
+      },
+    ],
+    ['besoin', () => (form.elements.namedItem('besoin') as HTMLSelectElement).value !== ''],
+    ['projet', () => (form.elements.namedItem('projet') as HTMLTextAreaElement).value.trim().length >= 30],
+  ];
+
+  function validate(): boolean {
+    let ok = true;
+    let firstInvalid: HTMLElement | null = null;
+    for (const [name, check] of fields) {
+      const input = document.getElementById(`f-${name === 'nom' ? 'nom' : name}`) as HTMLElement;
+      const error = document.getElementById(`err-${name}`);
+      const valid = check();
+      if (error) error.hidden = valid;
+      input.setAttribute('aria-invalid', String(!valid));
+      if (!valid && !firstInvalid) firstInvalid = input;
+      ok = ok && valid;
+    }
+    if (firstInvalid) firstInvalid.focus();
+    return ok;
+  }
+
+  function payload() {
+    const data = new FormData(form);
+    return {
+      nom: data.get('nom'),
+      email: data.get('email'),
+      activite: data.get('activite') || null,
+      url: data.get('url') || null,
+      besoin: data.get('besoin'),
+      projet: data.get('projet'),
+      budget: data.get('budget') || null,
+      page: location.pathname,
+    };
+  }
+
+  function buildMailto() {
+    const d = payload();
+    const subject = encodeURIComponent(`Projet landing page — ${d.nom}`);
+    const body = encodeURIComponent(
+      `Nom : ${d.nom}\nEmail : ${d.email}\nActivité : ${d.activite ?? '—'}\n` +
+        `Page actuelle : ${d.url ?? '—'}\nBesoin : ${d.besoin}\nBudget : ${d.budget ?? 'à discuter'}\n\n${d.projet}`
+    );
+    return `mailto:${email}?subject=${subject}&body=${body}`;
+  }
+
+  function showSuccess() {
+    form.querySelectorAll<HTMLElement>('.field, button[type="submit"], .btn-note').forEach((el) => (el.hidden = true));
+    status.className = 'form-status is-success';
+    status.innerHTML =
+      '<strong>Votre demande est envoyée.</strong> Vous recevrez une réponse personnelle sous 24 h ouvrées — regardez aussi vos courriers indésirables la première fois.';
+    if (typeof (window as any).track === 'function') (window as any).track('formulaire-succes');
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    status.className = 'form-status';
+    status.textContent = '';
+
+    // Anti-spam : honeypot rempli ou soumission en moins de 4 secondes.
+    const hp = (form.elements.namedItem('site_web') as HTMLInputElement).value;
+    if (hp !== '' || Date.now() - openedAt < 4000) {
+      showSuccess(); // ne pas renseigner les robots
+      return;
+    }
+
+    if (!validate()) {
+      status.className = 'form-status is-error';
+      status.textContent = 'Certains champs demandent votre attention ci-dessus.';
+      return;
+    }
+
+    if (!endpoint) {
+      mailtoLink.href = buildMailto();
+      fallback.hidden = false;
+      fallback.querySelector('p')!.textContent =
+        'Dernière étape : votre message est prêt, envoyez-le en un clic depuis votre messagerie.';
+      return;
+    }
+
+    const btn = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    btn.disabled = true;
+    btn.textContent = 'Envoi en cours…';
+
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(payload()),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      showSuccess();
+    } catch {
+      btn.disabled = false;
+      btn.innerHTML = 'Envoyer ma demande <span class="arrow" aria-hidden="true">→</span>';
+      mailtoLink.href = buildMailto();
+      fallback.hidden = false;
+      status.className = 'form-status is-error';
+      status.textContent = "L'envoi n'a pas abouti — votre message n'est pas perdu :";
+    }
+  });
+</script>

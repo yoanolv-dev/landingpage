@@ -1,0 +1,40 @@
+---
+import Base from '@/layouts/Base.astro';
+
+const title = 'Page introuvable';
+const description =
+  'Cette page n’existe pas ou n’existe plus. Retrouvez la méthode, les tarifs, le guide de la landing page ou contactez le studio.';
+---
+
+<Base title={title} description={description} noindex>
+  <div class="container nf">
+    <p class="kicker">Erreur 404</p>
+    <h1>Cette page n'a pas converti — elle n'existe pas</h1>
+    <p class="lede">
+      L'adresse est peut-être erronée, ou la page a été déplacée. Voici les
+      chemins utiles :
+    </p>
+    <ul class="list-plain nf-links">
+      <li><a href="/">L'accueil — création de landing pages sur mesure</a></li>
+      <li><a href="/methode/">La méthode en cinq étapes</a></li>
+      <li><a href="/tarifs/">Les tarifs, expliqués</a></li>
+      <li><a href="/guide/">Le guide de la landing page</a></li>
+      <li><a href="/checklist-landing-page/">La checklist des 40 points</a></li>
+      <li><a href="/contact/">Présenter votre projet</a></li>
+    </ul>
+  </div>
+</Base>
+
+<style>
+  .nf {
+    padding-block: clamp(4rem, 3rem + 6vw, 10rem);
+    max-width: 52rem;
+  }
+
+  .nf-links {
+    display: grid;
+    gap: var(--space-4);
+    margin-top: var(--space-8);
+    font-size: var(--text-lg);
+  }
+</style>

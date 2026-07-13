@@ -1,0 +1,340 @@
+---
+import Base from '@/layouts/Base.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import { checklist, checklistTotal } from '@/data/checklist';
+import { graph, webPage, breadcrumbs } from '@/lib/jsonld';
+
+const title = 'Checklist landing page : auditez la vôtre en 40 points';
+const description =
+  'La grille d’audit du studio en version interactive et gratuite : 40 points de contrôle — message, structure, confiance, technique, mesure. Sans inscription, sans email.';
+
+const crumbs = [
+  { name: 'Accueil', path: '/' },
+  { name: 'Checklist des 40 points', path: '/checklist-landing-page/' },
+];
+
+const jsonLd = graph(
+  webPage({ path: '/checklist-landing-page/', title, description }),
+  breadcrumbs(crumbs)
+);
+---
+
+<Base title={title} description={description} jsonLd={jsonLd}>
+  <div class="container">
+    <section class="page-hero">
+      <Breadcrumbs items={crumbs} />
+      <p class="kicker">Outil libre d'accès</p>
+      <h1>La checklist des 40 points : auditez votre landing page</h1>
+      <p class="lede">
+        C'est la grille utilisée sur les audits du studio — publiée en entier,
+        sans version « premium » cachée. Cochez ce que votre page fait déjà :
+        vos priorités apparaissent d'elles-mêmes. Rien n'est envoyé nulle
+        part, votre progression reste dans votre navigateur.
+      </p>
+      <div class="outils-bar no-print">
+        <button type="button" class="btn btn--ghost" id="btn-print">
+          Imprimer / exporter en PDF
+        </button>
+        <button type="button" class="btn btn--ghost" id="btn-reset">
+          Tout décocher
+        </button>
+      </div>
+    </section>
+
+    <section class="section" aria-label="Grille d'audit interactive">
+      <div class="score-global no-print" aria-live="polite">
+        <p class="score-chiffre">
+          <span id="score-total">0</span>
+          <span class="score-sur">/ {checklistTotal}</span>
+        </p>
+        <p class="score-verdict" id="score-verdict">
+          Cochez les points que votre page valide déjà.
+        </p>
+      </div>
+
+      <form id="checklist" class="axes">
+        {
+          checklist.map((axis, axisIndex) => (
+            <fieldset class="axe-block">
+              <legend>
+                <span class="axe-titre">
+                  <span class="axe-no" aria-hidden="true">
+                    {String(axisIndex + 1).padStart(2, '0')}
+                  </span>
+                  {axis.name}
+                  <span
+                    class="axe-score mono no-print"
+                    data-axis-score={axis.id}
+                    aria-label={`Score de l'axe ${axis.name}`}
+                  >
+                    0/{axis.items.length}
+                  </span>
+                </span>
+              </legend>
+              <p class="axe-intro">{axis.intro}</p>
+              <ul class="list-plain points">
+                {axis.items.map((item, itemIndex) => {
+                  const id = `${axis.id}-${itemIndex}`;
+                  return (
+                    <li>
+                      <label class="point" for={id}>
+                        <input type="checkbox" id={id} name={id} data-axis={axis.id} />
+                        <span>{item}</span>
+                      </label>
+                    </li>
+                  );
+                })}
+              </ul>
+            </fieldset>
+          ))
+        }
+      </form>
+
+      <div class="apres-checklist">
+        <h2>Que faire de votre score ?</h2>
+        <p>
+          Cette grille dit <em>où</em> chercher, pas toujours <em>comment</em>
+          corriger — certains points demandent une analyse de votre cas :
+          concurrence, trafic, maturité de l'offre. Deux suites possibles :
+        </p>
+        <ul>
+          <li>
+            Corriger vous-même, en commençant par l'axe le plus faible — les
+            articles du <a href="/guide/">guide</a> détaillent chaque famille
+            de corrections.
+          </li>
+          <li>
+            Confier le diagnostic : <a href="/audit-landing-page/">l'audit
+            professionnel</a> applique cette même grille à votre page, avec
+            l'analyse experte et la priorisation en plus.
+          </li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <CtaBand
+    title="40 cases, c'est du travail. Déléguez le diagnostic."
+    text="Transmettez simplement l'URL de votre page : l'audit complet applique cette grille à votre cas, avec un rapport priorisé sous 5 jours ouvrés."
+    label="Demander un audit"
+    track="cta-checklist"
+  />
+</Base>
+
+<style>
+  .page-hero {
+    padding-block: clamp(3rem, 2rem + 4vw, 6rem) 0;
+    max-width: 52rem;
+  }
+
+  .outils-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-top: var(--space-8);
+  }
+
+  .score-global {
+    position: sticky;
+    top: 4.5rem;
+    z-index: 10;
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-6);
+    padding: var(--space-4) var(--space-6);
+    background: var(--ink);
+    color: var(--on-ink);
+    margin-bottom: var(--space-12);
+  }
+
+  .score-chiffre {
+    font-size: var(--text-2xl);
+    font-weight: 600;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .score-sur {
+    font-size: var(--text-base);
+    color: var(--on-ink-soft);
+    font-weight: 380;
+  }
+
+  .score-verdict {
+    margin: 0;
+    font-style: italic;
+    color: var(--on-ink-soft);
+    font-size: var(--text-sm);
+  }
+
+  .axes {
+    display: grid;
+    gap: var(--space-16);
+  }
+
+  .axe-block {
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
+
+  legend {
+    padding: 0;
+    margin-bottom: var(--space-3);
+  }
+
+  .axe-titre {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-4);
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    font-weight: 560;
+    font-variation-settings: 'opsz' 40;
+  }
+
+  .axe-no {
+    font-family: var(--font-mono);
+    font-size: var(--text-base);
+    color: var(--vermillon);
+  }
+
+  .axe-score {
+    margin-left: auto;
+    font-size: var(--text-sm);
+    color: var(--ink-faint);
+  }
+
+  .axe-intro {
+    color: var(--ink-soft);
+    font-style: italic;
+    max-width: var(--measure);
+    margin-bottom: var(--space-6);
+  }
+
+  .points {
+    display: grid;
+    max-width: 52rem;
+  }
+
+  .point {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-4);
+    align-items: start;
+    padding: var(--space-4) var(--space-3);
+    border-top: var(--hairline);
+    cursor: pointer;
+    transition: background var(--speed) var(--ease);
+  }
+
+  .points li:last-child .point {
+    border-bottom: var(--hairline);
+  }
+
+  .point:hover {
+    background: var(--paper-deep);
+  }
+
+  .point input {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.2rem;
+    accent-color: var(--vermillon);
+    cursor: pointer;
+  }
+
+  .point:has(input:checked) span {
+    color: var(--ink-faint);
+  }
+
+  .apres-checklist {
+    margin-top: var(--space-16);
+    max-width: var(--measure);
+  }
+
+  .apres-checklist ul {
+    padding-left: 1.3rem;
+  }
+
+  .apres-checklist li {
+    margin-bottom: var(--space-3);
+  }
+
+  .apres-checklist li::marker {
+    color: var(--vermillon);
+  }
+
+  @media print {
+    .score-global,
+    .outils-bar {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const form = document.getElementById('checklist') as HTMLFormElement;
+  const boxes = Array.from(
+    form.querySelectorAll<HTMLInputElement>('input[type="checkbox"]')
+  );
+  const totalEl = document.getElementById('score-total')!;
+  const verdictEl = document.getElementById('score-verdict')!;
+  const KEY = 'checklist-lp-v1';
+
+  const verdicts: [number, string][] = [
+    [0, 'Cochez les points que votre page valide déjà.'],
+    [1, 'Le chantier prioritaire est probablement le message — commencez par l’axe 1.'],
+    [16, 'Des fondations existent, mais des fuites coûtent des conversions chaque semaine.'],
+    [28, 'Une page solide. Les points restants sont vos gains les plus accessibles.'],
+    [36, 'Très bon niveau — place aux tests d’optimisation plutôt qu’aux corrections.'],
+  ];
+
+  function update() {
+    const checked = boxes.filter((b) => b.checked);
+    totalEl.textContent = String(checked.length);
+
+    for (const el of document.querySelectorAll<HTMLElement>('[data-axis-score]')) {
+      const axis = el.dataset.axisScore;
+      const axisBoxes = boxes.filter((b) => b.dataset.axis === axis);
+      const n = axisBoxes.filter((b) => b.checked).length;
+      el.textContent = `${n}/${axisBoxes.length}`;
+    }
+
+    let verdict = verdicts[0]![1];
+    for (const [min, text] of verdicts) {
+      if (checked.length >= min) verdict = text;
+    }
+    if (checked.length === 0) verdict = verdicts[0]![1];
+    verdictEl.textContent = verdict;
+
+    try {
+      localStorage.setItem(
+        KEY,
+        JSON.stringify(checked.map((b) => b.id))
+      );
+    } catch {
+      /* stockage indisponible : la checklist reste utilisable sans persistance */
+    }
+  }
+
+  try {
+    const saved: string[] = JSON.parse(localStorage.getItem(KEY) ?? '[]');
+    for (const id of saved) {
+      const box = document.getElementById(id) as HTMLInputElement | null;
+      if (box) box.checked = true;
+    }
+  } catch {
+    /* ignore */
+  }
+
+  form.addEventListener('change', update);
+  update();
+
+  document.getElementById('btn-print')?.addEventListener('click', () => window.print());
+  document.getElementById('btn-reset')?.addEventListener('click', () => {
+    boxes.forEach((b) => (b.checked = false));
+    update();
+  });
+</script>

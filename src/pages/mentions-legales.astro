@@ -1,0 +1,65 @@
+---
+import Base from '@/layouts/Base.astro';
+import { site } from '@/config/site';
+
+const title = 'Mentions légales';
+const description = `Mentions légales du site ${site.brand} : identité de l'éditeur, hébergeur, directeur de la publication, propriété intellectuelle et contact.`;
+
+/**
+ * Page légale avec placeholders explicites.
+ * ⚠️ À compléter avec les informations réelles (src/config/site.ts → legal)
+ * et à faire valider juridiquement avant la mise en production.
+ */
+const aCompleter = (value: string | null, label: string) =>
+  value ?? `[À compléter avant mise en production : ${label}]`;
+---
+
+<Base title={title} description={description} noindex>
+  <div class="container legal">
+    <h1>Mentions légales</h1>
+    <p class="small">
+      Document à compléter et à faire valider juridiquement avant la mise en
+      production du site.
+    </p>
+
+    <h2>Éditeur du site</h2>
+    <p>
+      {aCompleter(site.legal.legalName, 'raison sociale ou nom du créateur')}<br />
+      Forme juridique : {aCompleter(site.legal.legalForm, 'statut juridique')}<br />
+      SIREN/SIRET : {aCompleter(site.legal.siret, 'numéro SIREN ou SIRET')}<br />
+      Adresse : {aCompleter(site.legal.address, 'adresse du siège')}<br />
+      Email : <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a>
+    </p>
+
+    <h2>Directeur de la publication</h2>
+    <p>{aCompleter(site.legal.publicationDirector, 'nom du directeur de la publication')}</p>
+
+    <h2>Hébergement</h2>
+    <p>{aCompleter(site.legal.host, "nom et coordonnées de l'hébergeur")}</p>
+
+    <h2>Propriété intellectuelle</h2>
+    <p>
+      L'ensemble des contenus de ce site — textes, système graphique, code —
+      est la propriété de son éditeur, sauf mention contraire. Toute
+      reproduction sans autorisation préalable est interdite.
+    </p>
+
+    <h2>Données personnelles</h2>
+    <p>
+      Le traitement des données transmises via le formulaire de contact est
+      décrit dans la <a href="/confidentialite/">politique de confidentialité</a>.
+    </p>
+  </div>
+</Base>
+
+<style>
+  .legal {
+    padding-block: clamp(3rem, 2rem + 4vw, 6rem);
+    max-width: var(--measure);
+  }
+
+  .legal h2 {
+    font-size: var(--text-xl);
+    margin-top: var(--space-12);
+  }
+</style>

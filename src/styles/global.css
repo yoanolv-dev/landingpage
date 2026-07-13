@@ -1,0 +1,695 @@
+/* ============================================================
+   VERMILLON — Système de design
+   Concept : « le document de travail » — papier, encre, vermillon.
+   Une seule famille de caractères (Fraunces) + une mono système.
+   ============================================================ */
+
+/* ---------- Polices ---------- */
+
+@font-face {
+  font-family: 'Fraunces';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('/fonts/fraunces-var.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Fraunces';
+  font-style: italic;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('/fonts/fraunces-italic-var.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ---------- Tokens ---------- */
+
+:root {
+  /* Encres & papiers */
+  --paper: #f7f3ea;
+  --paper-deep: #efe9da;
+  --paper-line: #ddd5c2;
+  --ink: #1a1713;
+  --ink-soft: #57503f;
+  --ink-faint: #857d69;
+  --vermillon: #e24a1b; /* graphique : filets, marques, grands titres */
+  --vermillon-ink: #a5350f; /* texte courant : contraste 6:1 sur papier */
+
+  /* Sur fond encre */
+  --on-ink: #ece6d6;
+  --on-ink-soft: #b8b0a0;
+  --on-ink-accent: #f06b3e;
+
+  /* Typographie */
+  --font-serif: 'Fraunces', 'Iowan Old Style', 'Palatino Linotype', Palatino,
+    Georgia, serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', 'JetBrains Mono',
+    Menlo, Consolas, monospace;
+
+  /* Échelle fluide */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: clamp(1rem, 0.96rem + 0.22vw, 1.125rem);
+  --text-lg: clamp(1.125rem, 1.05rem + 0.4vw, 1.35rem);
+  --text-xl: clamp(1.35rem, 1.2rem + 0.75vw, 1.75rem);
+  --text-2xl: clamp(1.7rem, 1.4rem + 1.4vw, 2.5rem);
+  --text-3xl: clamp(2.1rem, 1.6rem + 2.6vw, 3.6rem);
+  --text-display: clamp(2.5rem, 1.7rem + 4.2vw, 5rem);
+
+  /* Espacements */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+  --section: clamp(4rem, 3rem + 5vw, 8rem);
+
+  /* Gabarit */
+  --container: 76rem;
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+  --measure: 42rem; /* largeur de lecture */
+
+  /* Divers */
+  --hairline: 1px solid var(--paper-line);
+  --radius: 2px;
+  --speed: 220ms;
+  --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* ---------- Base ---------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  margin: 0;
+  background-color: var(--paper);
+  /* grain de papier léger, généré en SVG inline (≈300 octets) */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.09 0 0 0 0 0.07 0 0 0 0.035 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-size: var(--text-base);
+  font-weight: 380;
+  line-height: 1.65;
+  font-variation-settings: 'opsz' 12;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--vermillon);
+  color: var(--paper);
+}
+
+img,
+svg,
+video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ---------- Typographie ---------- */
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-serif);
+  font-weight: 560;
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  margin: 0 0 var(--space-6);
+  text-wrap: balance;
+  font-variation-settings: 'opsz' 100;
+}
+
+h1 {
+  font-size: var(--text-display);
+  font-weight: 480;
+}
+
+h2 {
+  font-size: var(--text-2xl);
+}
+
+h3 {
+  font-size: var(--text-xl);
+  font-variation-settings: 'opsz' 40;
+}
+
+h4 {
+  font-size: var(--text-lg);
+  font-variation-settings: 'opsz' 24;
+}
+
+p {
+  margin: 0 0 var(--space-4);
+  max-width: var(--measure);
+}
+
+strong {
+  font-weight: 620;
+}
+
+em {
+  font-variation-settings: 'opsz' 14;
+}
+
+a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--vermillon) 55%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color var(--speed) var(--ease), color var(--speed) var(--ease);
+}
+
+a:hover {
+  color: var(--vermillon-ink);
+  text-decoration-color: var(--vermillon);
+}
+
+:focus-visible {
+  outline: 2px solid var(--vermillon);
+  outline-offset: 3px;
+  border-radius: var(--radius);
+}
+
+/* Étiquette mono — repère de rubrique */
+.kicker {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6em;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--vermillon-ink);
+  margin-bottom: var(--space-4);
+}
+
+.kicker::before {
+  content: '';
+  inline-size: 1.6rem;
+  block-size: 1px;
+  background: var(--vermillon);
+  align-self: center;
+}
+
+.lede {
+  font-size: var(--text-lg);
+  line-height: 1.55;
+  color: var(--ink-soft);
+  font-weight: 360;
+  max-width: var(--measure);
+}
+
+.small,
+small {
+  font-size: var(--text-sm);
+  color: var(--ink-soft);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  letter-spacing: 0.02em;
+}
+
+/* ---------- Gabarit ---------- */
+
+.container {
+  width: min(var(--container), 100% - 2 * var(--gutter));
+  margin-inline: auto;
+}
+
+.section {
+  padding-block: var(--section);
+}
+
+.section + .section {
+  border-top: var(--hairline);
+}
+
+/* En-tête de section éditorial : numéro + titre alignés sur filet */
+.section-head {
+  display: grid;
+  gap: var(--space-2);
+  margin-bottom: clamp(2rem, 5vw, 4rem);
+}
+
+.section-no {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  color: var(--ink-faint);
+}
+
+/* Bande sombre — rythme éditorial */
+.band--ink {
+  background-color: var(--ink);
+  color: var(--on-ink);
+}
+
+.band--ink ::selection {
+  background: var(--on-ink-accent);
+  color: var(--ink);
+}
+
+.band--ink .lede,
+.band--ink .small,
+.band--ink small {
+  color: var(--on-ink-soft);
+}
+
+.band--ink .kicker {
+  color: var(--on-ink-accent);
+}
+
+.band--ink a:hover {
+  color: var(--on-ink-accent);
+}
+
+.band--paper-deep {
+  background-color: var(--paper-deep);
+}
+
+/* ---------- Boutons ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 0.85em 1.5em;
+  font-family: var(--font-serif);
+  font-size: var(--text-base);
+  font-weight: 520;
+  line-height: 1.2;
+  text-decoration: none;
+  border: 1px solid var(--ink);
+  border-radius: var(--radius);
+  background: var(--ink);
+  color: var(--paper);
+  cursor: pointer;
+  transition: background var(--speed) var(--ease), color var(--speed) var(--ease),
+    border-color var(--speed) var(--ease), translate var(--speed) var(--ease);
+}
+
+.btn:hover {
+  background: var(--vermillon);
+  border-color: var(--vermillon);
+  color: #fff;
+}
+
+.btn:active {
+  translate: 0 1px;
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--ink);
+}
+
+.btn--ghost:hover {
+  background: transparent;
+  color: var(--vermillon-ink);
+  border-color: var(--vermillon);
+}
+
+.band--ink .btn {
+  background: var(--on-ink);
+  border-color: var(--on-ink);
+  color: var(--ink);
+}
+
+.band--ink .btn:hover {
+  background: var(--on-ink-accent);
+  border-color: var(--on-ink-accent);
+  color: var(--ink);
+}
+
+.band--ink .btn--ghost {
+  background: transparent;
+  color: var(--on-ink);
+}
+
+.btn .arrow {
+  transition: translate var(--speed) var(--ease);
+}
+
+.btn:hover .arrow {
+  translate: 3px 0;
+}
+
+/* Note d'action — microcopie sous un bouton */
+.btn-note {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-faint);
+  letter-spacing: 0.04em;
+  margin-top: var(--space-3);
+}
+
+.band--ink .btn-note {
+  color: var(--on-ink-soft);
+}
+
+/* ---------- Listes éditoriales ---------- */
+
+.list-plain {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ---------- Annotations (mode coulisses) ---------- */
+
+/*
+  Le calque d'annotations est inerte par défaut.
+  data-backstage="true" sur <html> le révèle :
+  chaque .annotation devient visible, le gabarit s'esquisse.
+*/
+
+.annotation {
+  display: none;
+  position: relative;
+  max-width: 17rem;
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--vermillon-ink);
+  background: color-mix(in srgb, var(--vermillon) 7%, var(--paper));
+  border-left: 2px solid var(--vermillon);
+  margin-block: var(--space-4);
+}
+
+.annotation::before {
+  content: '✳ note de conception';
+  display: block;
+  font-family: var(--font-mono);
+  font-style: normal;
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-2);
+  color: var(--vermillon);
+}
+
+[data-backstage='true'] .annotation {
+  display: block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-backstage='true'] .annotation {
+    animation: annotation-in 320ms var(--ease) both;
+  }
+}
+
+@keyframes annotation-in {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* Marges annotées : sur écran large, les notes se placent dans la marge */
+@media (min-width: 72rem) {
+  .annotated {
+    position: relative;
+  }
+
+  .annotated .annotation--margin {
+    position: absolute;
+    right: calc(-17rem - var(--space-8));
+    width: 17rem;
+    margin-block: 0;
+  }
+}
+
+/* Esquisse du gabarit en mode coulisses */
+[data-backstage='true'] .section {
+  position: relative;
+}
+
+[data-backstage='true'] .section::after {
+  content: '';
+  position: absolute;
+  inset: 0.5rem;
+  border: 1px dashed color-mix(in srgb, var(--vermillon) 35%, transparent);
+  pointer-events: none;
+}
+
+/* ---------- Révélations au défilement ---------- */
+
+/* Les révélations ne masquent le contenu que si JavaScript est actif
+   (classe .js posée dans <head>) ET que le mouvement est accepté. */
+.reveal {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .js .reveal {
+    opacity: 0;
+    translate: 0 18px;
+    transition: opacity 600ms var(--ease), translate 600ms var(--ease);
+  }
+
+  .js .reveal.is-visible {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* ---------- Formulaires ---------- */
+
+.field {
+  display: grid;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+}
+
+.field label {
+  font-weight: 520;
+  font-size: var(--text-base);
+}
+
+.field .hint {
+  font-size: var(--text-sm);
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+.field input,
+.field select,
+.field textarea {
+  font: inherit;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius);
+  padding: 0.7em 0.9em;
+  width: 100%;
+  transition: border-color var(--speed) var(--ease);
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: 2px solid var(--vermillon);
+  outline-offset: 1px;
+  border-color: var(--vermillon);
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 8rem;
+}
+
+.field [aria-invalid='true'] {
+  border-color: var(--vermillon-ink);
+}
+
+.field-error {
+  color: var(--vermillon-ink);
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+/* ---------- Tableaux ---------- */
+
+.table-wrap {
+  overflow-x: auto;
+  margin-block: var(--space-8);
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: var(--text-sm);
+}
+
+th,
+td {
+  text-align: left;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: var(--hairline);
+  vertical-align: top;
+}
+
+th {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+/* ---------- Prose (articles du guide) ---------- */
+
+.prose {
+  max-width: var(--measure);
+}
+
+.prose h2 {
+  margin-top: var(--space-16);
+  padding-top: var(--space-6);
+  border-top: var(--hairline);
+}
+
+.prose h3 {
+  margin-top: var(--space-12);
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.4rem;
+  margin: 0 0 var(--space-6);
+}
+
+.prose li {
+  margin-bottom: var(--space-2);
+}
+
+.prose li::marker {
+  color: var(--vermillon);
+}
+
+.prose blockquote {
+  margin: var(--space-8) 0;
+  padding: var(--space-4) var(--space-6);
+  border-left: 2px solid var(--vermillon);
+  font-style: italic;
+  color: var(--ink-soft);
+}
+
+.prose blockquote p {
+  margin: 0;
+}
+
+.prose hr {
+  border: 0;
+  border-top: var(--hairline);
+  margin: var(--space-12) 0;
+}
+
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--paper-deep);
+  padding: 0.1em 0.35em;
+  border-radius: var(--radius);
+}
+
+/* Encadré « réponse directe » — définition synthétique en tête d'article */
+.prose .answer,
+.answer {
+  max-width: var(--measure);
+  background: var(--paper-deep);
+  border: var(--hairline);
+  border-left: 2px solid var(--vermillon);
+  padding: var(--space-6);
+  margin-block: var(--space-8);
+  font-size: var(--text-base);
+}
+
+.answer > :last-child {
+  margin-bottom: 0;
+}
+
+/* ---------- Divers ---------- */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--space-4);
+  top: -100%;
+  z-index: 100;
+  background: var(--ink);
+  color: var(--paper);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius);
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: var(--space-4);
+}
+
+/* Astérisque signature */
+.asterisk {
+  color: var(--vermillon);
+  font-style: normal;
+}
+
+@media print {
+  .site-header,
+  .site-footer,
+  .backstage-toggle,
+  .no-print {
+    display: none !important;
+  }
+}

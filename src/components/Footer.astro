@@ -1,0 +1,201 @@
+---
+import { site } from '@/config/site';
+
+const year = new Date().getFullYear();
+
+const columns = [
+  {
+    title: 'Studio',
+    links: [
+      { label: 'La méthode', href: '/methode/' },
+      { label: 'Tarifs', href: '/tarifs/' },
+      { label: 'Audit & refonte', href: '/audit-landing-page/' },
+      { label: 'À propos', href: '/a-propos/' },
+      { label: 'Contact', href: '/contact/' },
+    ],
+  },
+  {
+    title: 'Ressources',
+    links: [
+      { label: 'Le guide de la landing page', href: '/guide/' },
+      { label: 'Checklist des 40 points', href: '/checklist-landing-page/' },
+      { label: 'Réalisations', href: '/realisations/' },
+      { label: 'Template ou sur mesure ?', href: '/guide/template-ou-sur-mesure/' },
+    ],
+  },
+];
+---
+
+<footer class="site-footer band--ink">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <p class="footer-logo">
+          {site.brand}<span class="asterisk" aria-hidden="true">✳</span>
+        </p>
+        <p class="footer-baseline">
+          Landing pages sur mesure — stratégie, copywriting, design &
+          développement.
+        </p>
+        <a href={site.cta.href} class="btn" data-track="cta-footer">
+          {site.cta.label} <span class="arrow" aria-hidden="true">→</span>
+        </a>
+        <p class="btn-note">
+          Sans engagement — {site.commitments.responseTime}.
+        </p>
+      </div>
+
+      {
+        columns.map((col) => (
+          <nav aria-label={col.title}>
+            <p class="footer-title">{col.title}</p>
+            <ul class="list-plain">
+              {col.links.map((link) => (
+                <li>
+                  <a href={link.href}>{link.label}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
+
+      <div>
+        <p class="footer-title">Contact</p>
+        <ul class="list-plain">
+          <li>
+            <a href={`mailto:${site.contact.email}`} data-track="clic-email">
+              {site.contact.email}
+            </a>
+          </li>
+          {
+            site.contact.phone && (
+              <li>
+                <a
+                  href={`tel:${site.contact.phone.replace(/\s/g, '')}`}
+                  data-track="clic-telephone"
+                >
+                  {site.contact.phone}
+                </a>
+              </li>
+            )
+          }
+          <li class="footer-area">{site.contact.area}</li>
+          {
+            site.founder.linkedin && (
+              <li>
+                <a href={site.founder.linkedin} rel="me noopener">
+                  LinkedIn
+                </a>
+              </li>
+            )
+          }
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="colophon">
+        Ce site est conçu, écrit et développé à la main — sans template.
+        <a href="/realisations/ce-site/">Lire ses coulisses&nbsp;→</a>
+      </p>
+      <ul class="list-plain footer-legal">
+        <li><a href="/mentions-legales/">Mentions légales</a></li>
+        <li><a href="/confidentialite/">Confidentialité</a></li>
+        <li>© {year} {site.brand}</li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding-block: var(--space-16) var(--space-8);
+    margin-top: var(--space-24);
+  }
+
+  .footer-top {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: var(--space-12);
+    padding-bottom: var(--space-12);
+    border-bottom: 1px solid color-mix(in srgb, var(--on-ink) 18%, transparent);
+  }
+
+  .footer-logo {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    font-variation-settings: 'opsz' 60;
+    margin-bottom: var(--space-3);
+  }
+
+  .footer-baseline {
+    color: var(--on-ink-soft);
+    font-size: var(--text-sm);
+    max-width: 22rem;
+    margin-bottom: var(--space-6);
+  }
+
+  .footer-title {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--on-ink-soft);
+    margin-bottom: var(--space-4);
+  }
+
+  .footer-top ul li {
+    margin-bottom: var(--space-3);
+    font-size: var(--text-sm);
+  }
+
+  .footer-top a {
+    text-decoration: none;
+  }
+
+  .footer-top a:hover {
+    text-decoration: underline;
+  }
+
+  .footer-area {
+    color: var(--on-ink-soft);
+  }
+
+  .footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4) var(--space-8);
+    justify-content: space-between;
+    padding-top: var(--space-6);
+    font-size: var(--text-sm);
+    color: var(--on-ink-soft);
+  }
+
+  .colophon {
+    margin: 0;
+  }
+
+  .footer-legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+  }
+
+  @media (max-width: 56rem) {
+    .footer-top {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .footer-brand {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 36rem) {
+    .footer-top {
+      grid-template-columns: 1fr;
+      gap: var(--space-8);
+    }
+  }
+</style>
