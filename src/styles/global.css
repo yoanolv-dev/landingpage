@@ -1,40 +1,15 @@
 /* ============================================================
-   VERMILLON — Système de design « CHAMBRE NOIRE »
-   Sombre et sobre : noirs neutres profonds, blanc argentique,
-   un seul accent froid, typographie éditoriale de précision.
-   L'effet vient de la retenue — aucun halo, aucun artifice.
-
-   Typographie : Instrument Serif (titres, voix éditoriale)
-                 + Instrument Sans (texte, interface).
+   VERMILLON — Système de design « NUIT CINÉMATIQUE »
+   (piste C validée) : noir profond, halos froids discrets,
+   texte lumineux en dégradé, verre dépoli, précision Apple.
+   Une seule famille : Instrument Sans. Aucune couleur chaude.
 
    NOTE tokens : les noms historiques restent l'API sémantique.
-   --paper  = fond (nuit neutre)   --ink     = premier plan (argent)
-   --vermillon = accent froid      --band--ink = bande argent claire
+   --paper  = fond (nuit)      --ink       = premier plan (lumière)
+   --vermillon = accent glacier  --band--ink = bande « projecteur »
    ============================================================ */
 
-/* ---------- Polices ---------- */
-
-@font-face {
-  font-family: 'Instrument Serif';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/instrument-serif.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
-@font-face {
-  font-family: 'Instrument Serif';
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/instrument-serif-italic.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
-}
+/* ---------- Police ---------- */
 
 @font-face {
   font-family: 'Instrument Sans';
@@ -50,37 +25,46 @@
 /* ---------- Tokens ---------- */
 
 :root {
-  /* Chambre noire */
-  --paper: #0b0b0c; /* fond : noir neutre profond */
-  --paper-deep: #131316; /* surfaces relevées */
-  --paper-line: rgb(237 238 240 / 0.09); /* filets */
-  --ink: #edeef0; /* premier plan : blanc argentique */
-  --ink-soft: #a6a8ae; /* 8.3:1 */
-  --ink-faint: #85878f; /* 5.5:1 */
-  --vermillon: #7fb2cc; /* accent froid graphique — 8.6:1 */
-  --vermillon-ink: #a8cce0; /* accent froid texte — 11.6:1 */
+  /* Nuit & lumière */
+  --paper: #07080a; /* fond : noir profond */
+  --paper-deep: #101114; /* surfaces */
+  --paper-line: rgb(238 240 243 / 0.1); /* filets */
+  --glass: rgb(238 240 243 / 0.05); /* verre dépoli */
+  --ink: #eef0f3; /* premier plan */
+  --ink-soft: #a9acb2; /* 8.8:1 */
+  --ink-faint: #84878d; /* 5.6:1 */
+  --vermillon: #7fb6d8; /* accent glacier graphique — 9.1:1 */
+  --vermillon-ink: #9fd0e8; /* accent glacier texte — 12:1 */
 
-  /* Bande argent (zones de conversion, footer) */
-  --on-ink: #101013;
-  --on-ink-soft: #4e5055;
-  --on-ink-accent: #205a75; /* 6.3:1 sur argent */
+  /* Bande « projecteur » (CtaBand, footer, sections inversées) :
+     même nuit, halos plus présents — texte identique au fond sombre. */
+  --on-ink: #eef0f3;
+  --on-ink-soft: #a9acb2;
+  --on-ink-accent: #9fd0e8;
+
+  /* Halos froids — uniquement là où le regard doit aller */
+  --aurora:
+    radial-gradient(56rem 30rem at 12% 118%, rgb(64 120 180 / 0.32), transparent 65%),
+    radial-gradient(44rem 26rem at 88% 108%, rgb(46 160 160 / 0.15), transparent 60%),
+    radial-gradient(70rem 20rem at 50% 128%, rgb(120 160 220 / 0.12), transparent 70%);
 
   /* Typographie */
-  --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
-  --font-sans: 'Instrument Sans', 'Helvetica Neue', system-ui, sans-serif;
-  --font-display: var(--font-sans); /* alias de compatibilité */
-  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', 'JetBrains Mono',
-    Menlo, Consolas, monospace;
+  --font-sans: 'Instrument Sans', -apple-system, 'SF Pro Text', 'Helvetica Neue',
+    system-ui, sans-serif;
+  --font-display: var(--font-sans);
+  --font-serif: var(--font-sans); /* alias de compatibilité */
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas,
+    monospace;
 
   /* Échelle fluide */
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: clamp(1rem, 0.96rem + 0.22vw, 1.0625rem);
   --text-lg: clamp(1.1rem, 1.02rem + 0.4vw, 1.3rem);
-  --text-xl: clamp(1.3rem, 1.16rem + 0.7vw, 1.75rem);
-  --text-2xl: clamp(1.9rem, 1.5rem + 2vw, 3.1rem);
-  --text-3xl: clamp(2.3rem, 1.7rem + 3vw, 4.1rem);
-  --text-display: clamp(2.8rem, 1.7rem + 4.8vw, 5.9rem);
+  --text-xl: clamp(1.3rem, 1.16rem + 0.7vw, 1.7rem);
+  --text-2xl: clamp(1.8rem, 1.4rem + 2vw, 3rem);
+  --text-3xl: clamp(2.2rem, 1.6rem + 3vw, 4rem);
+  --text-display: clamp(2.7rem, 1.6rem + 4.6vw, 5.6rem);
 
   /* Espacements */
   --space-1: 0.25rem;
@@ -101,10 +85,11 @@
 
   /* Matière & mouvement */
   --hairline: 1px solid var(--paper-line);
-  --radius: 8px;
+  --radius: 14px;
   --radius-pill: 999px;
   --speed: 220ms;
   --ease: cubic-bezier(0.3, 0.1, 0.2, 1);
+  --shadow-deep: 0 24px 70px rgb(0 0 0 / 0.55);
 }
 
 /* ---------- Base ---------- */
@@ -129,13 +114,12 @@ html {
 body {
   margin: 0;
   background-color: var(--paper);
-  /* grain argentique très léger (SVG inline ≈300 octets) */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.93 0 0 0 0 0.93 0 0 0 0 0.94 0 0 0 0.022 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
   color: var(--ink);
   font-family: var(--font-sans);
   font-size: var(--text-base);
-  font-weight: 420;
-  line-height: 1.62;
+  font-weight: 430;
+  line-height: 1.6;
+  letter-spacing: -0.006em;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
@@ -155,42 +139,55 @@ video {
 
 /* ---------- Typographie ---------- */
 
-/* Les grands titres parlent en serif — la voix éditoriale.
-   Les niveaux inférieurs restent en sans — la voix d'interface. */
 h1,
-h2 {
-  font-family: var(--font-serif);
-  font-weight: 400;
-  line-height: 1.04;
-  letter-spacing: -0.01em;
+h2,
+h3,
+h4 {
+  font-family: var(--font-sans);
   margin: 0 0 var(--space-6);
   text-wrap: balance;
 }
 
 h1 {
   font-size: var(--text-display);
+  font-weight: 660;
+  line-height: 1.03;
+  letter-spacing: -0.045em;
+  /* texte lumineux — le blanc « éclaire » le haut du titre */
+  background: linear-gradient(180deg, #ffffff 25%, #b9bcc2);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+h1 em,
+h2 em {
+  font-style: normal;
+  background: linear-gradient(115deg, #cfe9f7, var(--vermillon));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 h2 {
   font-size: var(--text-2xl);
-}
-
-h3,
-h4 {
-  font-family: var(--font-sans);
-  font-weight: 620;
-  line-height: 1.15;
-  letter-spacing: -0.015em;
-  margin: 0 0 var(--space-4);
-  text-wrap: balance;
+  font-weight: 650;
+  line-height: 1.06;
+  letter-spacing: -0.035em;
 }
 
 h3 {
   font-size: var(--text-xl);
+  font-weight: 620;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
 }
 
 h4 {
   font-size: var(--text-lg);
+  font-weight: 620;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
 }
 
 p {
@@ -201,20 +198,6 @@ p {
 strong {
   font-weight: 640;
   color: var(--ink);
-}
-
-.band--ink strong {
-  color: inherit;
-}
-
-em {
-  font-family: inherit;
-}
-
-h1 em,
-h2 em {
-  font-style: italic;
-  color: var(--vermillon-ink);
 }
 
 a {
@@ -234,10 +217,10 @@ a:hover {
 :focus-visible {
   outline: 2px solid var(--vermillon);
   outline-offset: 3px;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
-/* Étiquette — repère de rubrique, gravure discrète */
+/* Étiquette de rubrique */
 .kicker {
   display: inline-flex;
   align-items: center;
@@ -245,7 +228,7 @@ a:hover {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   font-weight: 500;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--ink-faint);
   margin-bottom: var(--space-4);
@@ -253,7 +236,7 @@ a:hover {
 
 .kicker::before {
   content: '';
-  inline-size: 1.75rem;
+  inline-size: 1.6rem;
   block-size: 1px;
   background: var(--vermillon);
 }
@@ -262,7 +245,7 @@ a:hover {
   font-size: var(--text-lg);
   line-height: 1.55;
   color: var(--ink-soft);
-  font-weight: 400;
+  font-weight: 420;
   max-width: var(--measure);
 }
 
@@ -311,38 +294,13 @@ small {
   color: var(--vermillon);
 }
 
-/* Bande argent — la lumière s'inverse aux moments décisifs */
+/* Bande « projecteur » — les moments décisifs reçoivent la lumière */
 .band--ink {
-  background-color: var(--ink);
-  background-image: none;
+  position: relative;
+  background-color: var(--paper);
+  background-image: var(--aurora);
   color: var(--on-ink);
-}
-
-.band--ink ::selection {
-  background: var(--on-ink);
-  color: var(--ink);
-}
-
-.band--ink .lede,
-.band--ink .small,
-.band--ink small {
-  color: var(--on-ink-soft);
-}
-
-.band--ink .kicker {
-  color: var(--on-ink-soft);
-}
-
-.band--ink .kicker::before {
-  background: var(--on-ink-accent);
-}
-
-.band--ink a:hover {
-  color: var(--on-ink-accent);
-}
-
-.band--ink .section-no {
-  color: var(--on-ink-soft);
+  border-block: var(--hairline);
 }
 
 .band--paper-deep {
@@ -356,70 +314,50 @@ small {
   align-items: center;
   justify-content: center;
   gap: 0.6em;
-  padding: 0.9em 1.75em;
+  padding: 0.95em 1.9em;
   font-family: var(--font-sans);
   font-size: var(--text-base);
-  font-weight: 600;
+  font-weight: 620;
   line-height: 1.15;
-  letter-spacing: -0.005em;
+  letter-spacing: -0.01em;
   text-decoration: none;
-  border: 1px solid var(--ink);
+  border: 1px solid #f5f6f7;
   border-radius: var(--radius-pill);
-  background: var(--ink);
-  color: var(--paper);
+  background: #f5f6f7;
+  color: #0b0c0e;
   cursor: pointer;
-  transition: background var(--speed) var(--ease), color var(--speed) var(--ease),
-    border-color var(--speed) var(--ease), translate var(--speed) var(--ease),
-    box-shadow var(--speed) var(--ease);
+  box-shadow: var(--shadow-deep);
+  transition: background var(--speed) var(--ease), translate var(--speed) var(--ease),
+    box-shadow var(--speed) var(--ease), border-color var(--speed) var(--ease),
+    color var(--speed) var(--ease);
 }
 
 .btn:hover {
-  background: var(--vermillon-ink);
-  border-color: var(--vermillon-ink);
-  color: var(--paper);
+  background: #ffffff;
+  border-color: #ffffff;
+  color: #0b0c0e;
   translate: 0 -1px;
-  box-shadow: 0 10px 30px rgb(0 0 0 / 0.35);
+  box-shadow: 0 28px 80px rgb(0 0 0 / 0.6), 0 0 0 6px rgb(238 240 243 / 0.06);
 }
 
 .btn:active {
   translate: 0 0;
-  box-shadow: none;
 }
 
 .btn--ghost {
-  background: transparent;
-  border-color: color-mix(in srgb, var(--ink) 30%, transparent);
+  background: var(--glass);
+  border-color: color-mix(in srgb, var(--ink) 26%, transparent);
   color: var(--ink);
+  box-shadow: none;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .btn--ghost:hover {
-  background: transparent;
-  color: var(--vermillon-ink);
-  border-color: var(--vermillon);
-  box-shadow: none;
-}
-
-.band--ink .btn {
-  background: var(--on-ink);
-  border-color: var(--on-ink);
+  background: rgb(238 240 243 / 0.09);
   color: var(--ink);
-}
-
-.band--ink .btn:hover {
-  background: var(--on-ink-accent);
-  border-color: var(--on-ink-accent);
-  color: #fff;
-}
-
-.band--ink .btn--ghost {
-  background: transparent;
-  border-color: color-mix(in srgb, var(--on-ink) 35%, transparent);
-  color: var(--on-ink);
-}
-
-.band--ink .btn--ghost:hover {
-  color: var(--on-ink-accent);
-  border-color: var(--on-ink-accent);
+  border-color: color-mix(in srgb, var(--ink) 40%, transparent);
+  box-shadow: none;
 }
 
 .btn .arrow {
@@ -436,10 +374,6 @@ small {
   color: var(--ink-faint);
   letter-spacing: 0.04em;
   margin-top: var(--space-3);
-}
-
-.band--ink .btn-note {
-  color: var(--on-ink-soft);
 }
 
 /* ---------- Listes ---------- */
@@ -528,8 +462,7 @@ small {
 
 /* ---------- Mouvements ---------- */
 
-/* Révélations — comme un tirage qui se développe. Jamais de contenu
-   masqué sans JavaScript (classe .js posée dans <head>). */
+/* Révélations — jamais de contenu masqué sans JavaScript. */
 .reveal {
   opacity: 1;
 }
@@ -546,7 +479,7 @@ small {
     translate: 0 0;
   }
 
-  /* Entrée séquencée du hero — CSS pur, gouvernée par --stagger */
+  /* Entrée séquencée du hero — CSS pur */
   .js [data-stagger] {
     opacity: 0;
     translate: 0 16px;
@@ -588,15 +521,15 @@ small {
   color: var(--ink);
   background: var(--paper-deep);
   border: 1px solid var(--paper-line);
-  border-radius: var(--radius);
-  padding: 0.75em 1em;
+  border-radius: 12px;
+  padding: 0.8em 1em;
   width: 100%;
   transition: border-color var(--speed) var(--ease), box-shadow var(--speed) var(--ease);
 }
 
 .field select {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%2385878f' stroke-width='2'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%2384878d' stroke-width='2'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 1em center;
 }
@@ -631,6 +564,7 @@ small {
   margin-block: var(--space-8);
   border: var(--hairline);
   border-radius: var(--radius);
+  background: var(--glass);
 }
 
 table {
@@ -700,7 +634,6 @@ thead th {
   padding: var(--space-4) var(--space-6);
   border-left: 2px solid var(--vermillon);
   color: var(--ink-soft);
-  font-family: var(--font-serif);
   font-size: var(--text-lg);
 }
 
@@ -719,7 +652,7 @@ thead th {
   font-size: 0.85em;
   background: var(--paper-deep);
   padding: 0.1em 0.35em;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 .prose .answer,
@@ -757,12 +690,12 @@ thead th {
   left: var(--space-4);
   top: -100%;
   z-index: 100;
-  background: var(--ink);
-  color: var(--paper);
+  background: #f5f6f7;
+  color: #0b0c0e;
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-pill);
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 620;
 }
 
 .skip-link:focus {
@@ -770,13 +703,27 @@ thead th {
 }
 
 .asterisk {
-  color: var(--vermillon);
+  color: var(--vermillon-ink);
   font-style: normal;
 }
 
 @media print {
   body {
     background: #fff;
+    color: #111;
+  }
+
+  h1,
+  h2 {
+    background: none;
+    -webkit-text-fill-color: initial;
+    color: #111;
+  }
+
+  h1 em,
+  h2 em {
+    background: none;
+    -webkit-text-fill-color: initial;
     color: #111;
   }
 

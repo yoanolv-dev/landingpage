@@ -133,28 +133,10 @@ const etapes = [
 <Base title={title} description={description} jsonLd={jsonLd} brandInTitle={false}>
   <!-- ============ HERO ============ -->
   <section class="hero annotated" aria-label="Introduction">
-    <!-- Anneaux de développement — signature graphique, 1 px, statique -->
-    <svg
-      class="hero-rings"
-      aria-hidden="true"
-      viewBox="0 0 800 800"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      {
-        [390, 330, 272, 216, 162, 110].map((r, i) => (
-          <circle
-            cx="400"
-            cy="400"
-            r={r}
-            stroke="currentColor"
-            stroke-width="1"
-            opacity={0.05 + i * 0.012}
-          />
-        ))
-      }
-    </svg>
-    <div class="container hero-grid">
+    <div class="hero-aurora" aria-hidden="true"></div>
+    <div class="hero-horizon" aria-hidden="true"></div>
+    <div class="container hero-inner">
+
       <div class="hero-main">
         <p class="kicker" data-stagger style="--stagger: 0">
           Studio indépendant · France, à distance
@@ -186,16 +168,17 @@ const etapes = [
         </p>
       </div>
 
-      <aside class="cartouche" aria-label="Fiche de mission résumée" data-stagger style="--stagger: 5">
-        <p class="cartouche-titre mono" aria-hidden="true">Fiche de mission</p>
-        <dl>
-          <div><dt>Objet</dt><dd>Landing page sur mesure</dd></div>
-          <div><dt>Périmètre</dt><dd>Stratégie · Texte · Design · Code</dd></div>
-          <div><dt>Délai</dt><dd>{site.commitments.projectLeadTime}</dd></div>
-          <div><dt>Interlocuteur</dt><dd>Un seul, du brief à la mise en ligne</dd></div>
-          <div><dt>Suite</dt><dd>{site.commitments.responseTime}</dd></div>
-        </dl>
-      </aside>
+<ul
+        class="hero-chips list-plain"
+        aria-label="Repères de la mission"
+        data-stagger
+        style="--stagger: 5"
+      >
+        <li><b>Délai</b>{site.commitments.projectLeadTime}</li>
+        <li><b>Interlocuteur</b>Un seul, du brief à la mise en ligne</li>
+        <li><b>Livrable</b>Page, méthode et plan de mesure</li>
+        <li><b>Suite</b>{site.commitments.responseTime}</li>
+      </ul>
 
       <Annotation margin>
         Ce titre ne dit pas « belle page » : il oppose <em>argumentaire</em> à
@@ -549,96 +532,118 @@ const etapes = [
 
 
 <style>
-  /* ---------- Hero — la révélation ---------- */
+  /* ---------- Hero — nuit cinématique, composition centrée ---------- */
   .hero {
     position: relative;
     overflow: clip;
-    padding-block: clamp(3.5rem, 2.5rem + 5vw, 7rem) clamp(3rem, 2rem + 4vw, 5.5rem);
+    padding-block: clamp(4rem, 3rem + 5vw, 7.5rem) clamp(4.5rem, 3.5rem + 5vw, 8rem);
+    border-bottom: var(--hairline);
   }
 
-  .hero-rings {
+  .hero-aurora {
     position: absolute;
-    top: 50%;
-    right: -14rem;
-    translate: 0 -50%;
-    width: clamp(30rem, 46vw, 50rem);
-    height: auto;
-    color: var(--ink);
+    inset: 0;
+    background: var(--aurora);
     pointer-events: none;
-    user-select: none;
   }
 
-  .hero-grid {
+  .hero-horizon {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: clamp(6rem, 12vh, 9rem);
+    border-top: 1px solid rgb(238 240 243 / 0.12);
+    pointer-events: none;
+  }
+
+  .hero-inner {
     position: relative;
+  }
+
+  .hero-main {
     display: grid;
-    grid-template-columns: minmax(0, 2.2fr) minmax(16rem, 1fr);
-    gap: var(--space-12);
-    align-items: end;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .hero .kicker {
+    border: 1px solid color-mix(in srgb, var(--ink) 22%, transparent);
+    border-radius: var(--radius-pill);
+    padding: 0.55em 1.3em;
+    color: var(--ink-soft);
+    background: var(--glass);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    margin-bottom: var(--space-6);
+  }
+
+  .hero .kicker::before {
+    display: none;
   }
 
   .hero h1 {
-    margin-bottom: var(--space-8);
+    max-width: 62rem;
+    margin-bottom: var(--space-6);
+  }
+
+  .hero .lede {
+    max-width: 42rem;
+    margin-bottom: var(--space-2);
   }
 
   .footnote-call {
     font-size: 0.4em;
     vertical-align: super;
     text-decoration: none;
-    color: var(--vermillon);
+    -webkit-text-fill-color: var(--vermillon);
     margin-left: 0.12em;
   }
 
   .hero-actions {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: var(--space-4);
     margin-top: var(--space-8);
   }
 
-  /* Cartouche — fiche de mission, gravure minimale */
-  .cartouche {
-    position: relative;
+  .hero .btn-note {
+    text-align: center;
+  }
+
+  /* Chips en verre — les repères de mission */
+  .hero-chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+    margin-top: clamp(2.5rem, 6vh, 4.5rem);
+  }
+
+  .hero-chips li {
+    display: grid;
+    gap: 2px;
+    min-width: 11rem;
+    text-align: left;
+    padding: var(--space-4) var(--space-6);
     border: var(--hairline);
     border-radius: var(--radius);
-    background: color-mix(in srgb, var(--paper-deep) 88%, transparent);
-    backdrop-filter: blur(6px);
-    padding: var(--space-6);
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     font-size: var(--text-sm);
+    color: var(--ink-soft);
   }
 
-  .cartouche-titre {
-    font-size: var(--text-xs);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    margin: 0 0 var(--space-4);
-    padding-bottom: var(--space-3);
-    border-bottom: var(--hairline);
-  }
-
-  .cartouche dl {
-    margin: 0;
-    display: grid;
-    gap: var(--space-4);
-  }
-
-  .cartouche dt {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--vermillon-ink);
-    margin-bottom: var(--space-1);
-  }
-
-  .cartouche dd {
-    margin: 0;
-    font-weight: 520;
+  .hero-chips b {
+    font-weight: 620;
+    color: var(--ink);
+    font-size: var(--text-sm);
   }
 
   /* ---------- Sommaire ---------- */
   .sommaire {
-    border-block: var(--hairline);
+    border-bottom: var(--hairline);
     background: var(--paper);
   }
 
@@ -771,7 +776,7 @@ const etapes = [
   /* ---------- 04 Offres ---------- */
   .offres {
     display: grid;
-    gap: 0;
+    gap: var(--space-4);
   }
 
   .offre {
@@ -779,17 +784,16 @@ const etapes = [
     grid-template-columns: minmax(12rem, 1fr) 1.4fr 1fr auto;
     gap: var(--space-6) var(--space-8);
     align-items: start;
-    padding: var(--space-8) var(--space-4);
-    border-top: var(--hairline);
-    transition: background var(--speed) var(--ease);
+    padding: var(--space-8);
+    border: var(--hairline);
+    border-radius: var(--radius);
+    background: var(--glass);
+    transition: border-color var(--speed) var(--ease), background var(--speed) var(--ease);
   }
 
   .offre:hover {
-    background: var(--paper-deep);
-  }
-
-  .offre:last-child {
-    border-bottom: var(--hairline);
+    background: rgb(238 240 243 / 0.07);
+    border-color: color-mix(in srgb, var(--ink) 24%, transparent);
   }
 
   .offre-head {
@@ -852,7 +856,7 @@ const etapes = [
     color: var(--ink-soft);
   }
 
-  /* ---------- Pour qui (bande argent) ---------- */
+  /* ---------- Pour qui (bande projecteur) ---------- */
   .situations {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -860,9 +864,9 @@ const etapes = [
   }
 
   .situation-cas {
-    font-family: var(--font-serif);
     font-size: var(--text-xl);
-    font-weight: 400;
+    font-weight: 640;
+    letter-spacing: -0.02em;
     line-height: 1.12;
     margin-bottom: var(--space-2);
     text-wrap: balance;
@@ -887,17 +891,18 @@ const etapes = [
     padding: var(--space-8);
     border: var(--hairline);
     border-radius: var(--radius);
-    background: var(--paper-deep);
+    background: var(--glass);
     text-decoration: none;
     transition: border-color var(--speed) var(--ease), translate var(--speed) var(--ease),
-      box-shadow var(--speed) var(--ease);
+      box-shadow var(--speed) var(--ease), background var(--speed) var(--ease);
   }
 
   .preuve:hover {
     color: inherit;
-    border-color: color-mix(in srgb, var(--vermillon) 50%, transparent);
+    background: rgb(238 240 243 / 0.07);
+    border-color: color-mix(in srgb, var(--vermillon) 45%, transparent);
     translate: 0 -3px;
-    box-shadow: 0 14px 40px rgb(0 0 0 / 0.35);
+    box-shadow: var(--shadow-deep);
   }
 
   .preuve h3 {
@@ -985,20 +990,6 @@ const etapes = [
   }
 
   @media (max-width: 56rem) {
-    .hero-grid {
-      grid-template-columns: 1fr;
-      gap: var(--space-8);
-    }
-
-    .hero-rings {
-      right: -18rem;
-      width: 34rem;
-    }
-
-    .cartouche {
-      max-width: 26rem;
-    }
-
     .probleme-grid {
       grid-template-columns: 1fr;
       gap: var(--space-8);
@@ -1008,11 +999,24 @@ const etapes = [
     .preuves {
       grid-template-columns: 1fr;
     }
+
+    .hero-chips li {
+      flex: 1 1 40%;
+      min-width: 0;
+    }
   }
 
   @media (max-width: 40rem) {
+    .hero-actions {
+      width: 100%;
+    }
+
     .hero-actions .btn {
       width: 100%;
+    }
+
+    .hero-chips li {
+      flex: 1 1 100%;
     }
 
     .probleme-list {

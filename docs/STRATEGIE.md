@@ -40,31 +40,31 @@ sans diluer le discours.
 
 ## 3. Direction artistique
 
-**Concept : « La chambre noire »** — sombre et sobre, la retenue comme
-luxe. Comme dans une chambre noire, tout est construit pour révéler une
-seule chose : l'offre du visiteur.
+**Concept : « Nuit cinématique »** (piste validée par le commanditaire,
+référence de finition : Apple) — noir profond, halos froids discrets,
+la lumière dirige le regard vers ce qui doit convaincre.
 
-- Palette : noir neutre profond `#0B0B0C`, surfaces `#131316`, blanc
-  argentique `#EDEEF0`, un seul accent froid `#7FB2CC` (graphique) /
-  `#A8CCE0` (texte accent, 11.6:1). Bandes argent inversées pour les zones
-  de conversion (CtaBand, footer) et la section « Pour qui ». Tokens dans
-  `src/styles/global.css` (noms historiques conservés comme API :
-  `--paper` = fond, `--ink` = premier plan, `--vermillon` = accent).
-- Typographie : deux voix — **Instrument Serif** (h1/h2, marque en
-  italique : la voix éditoriale) et **Instrument Sans variable** (texte,
-  interface) ; mono système pour les étiquettes. Trois fichiers
-  auto-hébergés, ~73 Ko en tout.
-- Système : filets d'un pixel, anneaux concentriques du hero (signature
-  graphique, statique), cartouche « fiche de mission », astérisque ✳,
-  entrée séquencée du hero (CSS pur), zéro dégradé, zéro halo, zéro
-  animation décorative.
+- Palette : noir `#07080A`, surfaces `#101114`, verre dépoli
+  (`rgba(238,240,243,.05)` + blur), lumière `#EEF0F3`, accent glacier
+  `#7FB6D8` (graphique) / `#9FD0E8` (texte, 12:1). Halos réservés au hero
+  et aux bandes « projecteur » (CtaBand, footer, « Pour qui ») via le token
+  `--aurora`. Tokens dans `src/styles/global.css` (noms historiques
+  conservés comme API : `--paper` = fond, `--ink` = premier plan,
+  `--vermillon` = accent).
+- Typographie : une seule famille, **Instrument Sans variable** (~30 Ko
+  auto-hébergés) — titres serrés (-0.045em) avec dégradé lumineux
+  (blanc → gris), accent en dégradé glacier ; mono système pour les
+  étiquettes.
+- Système : hero centré (pilule kicker, H1 lumineux, CTA blanc à contraste
+  maximal 18:1, chips de mission en verre), cartes en verre dépoli,
+  filets 1 px, rayons 14 px, ombres profondes.
 - **Signature interactive : le mode coulisses** — un calque d'annotations
   révèle les décisions de conception à même la page.
-- Motion : uniquement fonctionnel et discret, gouverné par
-  `prefers-reduced-motion` et par la classe `.js` (aucun contenu masqué
-  sans JavaScript). CTA collant sur mobile.
-- Anti-modèles bannis : dégradés violets, glassmorphism, halos lumineux,
-  bandeaux défilants, compteurs animés, bento grids, mockups génériques.
+- Motion : entrée séquencée du hero et révélations discrètes, gouvernées
+  par `prefers-reduced-motion` et `.js` (aucun contenu masqué sans
+  JavaScript). CTA collant sur mobile.
+- Anti-modèles bannis : dégradés violets, bandeaux défilants, compteurs
+  animés, bento grids gratuites, mockups génériques.
 
 ## 4. Parcours de conversion
 

@@ -13,11 +13,11 @@ La stratégie complète (positionnement, SEO, roadmap) est documentée dans
   premier octet, zéro JavaScript par défaut (les seuls scripts sont de petits
   îlots vanilla : menu, démonstration, checklist, formulaire, mode coulisses).
 - **CSS vanilla** avec design tokens (`src/styles/global.css`) — pas de
-  framework CSS. Identité « Chambre noire » : noirs neutres profonds, blanc
-  argentique, un seul accent froid, bandes argent pour les zones de
-  conversion.
-- **Instrument Serif + Instrument Sans** auto-hébergées (3 fichiers,
-  ~73 Ko en tout), seules polices chargées.
+  framework CSS. Identité « Nuit cinématique » : noir profond, halos froids
+  réservés aux moments décisifs, verre dépoli, CTA blanc à contraste
+  maximal.
+- **Instrument Sans variable** auto-hébergée (~30 Ko), seule police
+  chargée.
 - **MDX** pour les articles du guide (collection `src/content/guide/`).
 - **@astrojs/sitemap** + robots.txt généré + données structurées JSON-LD.
 

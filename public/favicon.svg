@@ -1,4 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="14" fill="#0b0b0c"/>
-  <text x="32" y="47" font-family="Arial, sans-serif" font-size="46" font-weight="bold" text-anchor="middle" fill="#a8cce0">✳</text>
+  <defs>
+    <radialGradient id="g" cx="0.3" cy="1.1" r="1.1">
+      <stop offset="0" stop-color="#1c3c55"/>
+      <stop offset="0.55" stop-color="#0b1017"/>
+      <stop offset="1" stop-color="#07080a"/>
+    </radialGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#g)"/>
+  <text x="32" y="47" font-family="Arial, sans-serif" font-size="44" font-weight="bold" text-anchor="middle" fill="#9fd0e8">✳</text>
 </svg>
