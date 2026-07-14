@@ -58,8 +58,11 @@ la lumière dirige le regard vers ce qui doit convaincre.
 - Système : hero centré (pilule kicker, H1 lumineux, CTA blanc à contraste
   maximal 18:1, chips de mission en verre), cartes en verre dépoli,
   filets 1 px, rayons 14 px, ombres profondes.
-- **Signature interactive : le mode coulisses** — un calque d'annotations
-  révèle les décisions de conception à même la page.
+- **Signatures interactives** : la « simulation en réalité humaine »
+  (un visiteur simulé — regard, pensées, jauge d'attention — vit les deux
+  versions d'une même page) ; le ciel de nuit vivant du hero (constellation
+  canvas réactive au pointeur, coupée si reduced-motion) ; le mode
+  coulisses (calque d'annotations de conception).
 - Motion : entrée séquencée du hero et révélations discrètes, gouvernées
   par `prefers-reduced-motion` et `.js` (aucun contenu masqué sans
   JavaScript). CTA collant sur mobile.
@@ -151,7 +154,8 @@ avis, aucun prix caché dans le balisage. Générateurs : `src/lib/jsonld.ts`.
 
 Événements en place (via `data-track`) : `cta-header`, `cta-hero`,
 `cta-bande`, `cta-footer`, `cta-audit`, `formulaire-envoi`,
-`formulaire-succes`, `mode-coulisses`, `demo-avant/apres`, `clic-email`.
+`formulaire-succes`, `mode-coulisses`, `sim-lancee`, `sim-avant/apres`,
+`sim-rejouer`, `clic-email`.
 
 À suivre après mise en ligne :
 

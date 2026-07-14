@@ -1,0 +1,841 @@
+---
+/**
+ * SIMULATION EN RÉALITÉ HUMAINE — la pièce maîtresse.
+ * Un visiteur simulé parcourt la page : son regard (projecteur), ses pensées
+ * (flux en français) et son attention (jauge qui s'épuise) sont rejoués en
+ * temps réel sur deux versions de la même offre fictive « Meridiem » :
+ * la page template le perd, la page conçue le convertit.
+ *
+ * Accessibilité & robustesse :
+ * - sans JavaScript ou avec prefers-reduced-motion : le storyboard complet
+ *   (pensées + verdict) est affiché statiquement — aucun contenu perdu ;
+ * - pensées annoncées via aria-live ; commandes clavier natives ;
+ * - la simulation ne démarre qu'une fois visible, timers nettoyés.
+ */
+
+interface Step {
+  /** Ancre du regard dans la maquette (data-spot). */
+  spot: string;
+  /** Pensée du visiteur. */
+  think: string;
+  /** Attention restante après ce pas (0-100). */
+  att: number;
+  /** Durée du pas en ms. */
+  dur: number;
+}
+
+const scenarios: Record<
+  'avant' | 'apres',
+  { verdict: string; issue: 'perdu' | 'converti'; steps: Step[] }
+> = {
+  avant: {
+    verdict: 'Visiteur perdu à 0:13 — le clic publicitaire, lui, est déjà payé.',
+    issue: 'perdu',
+    steps: [
+      { spot: 'nav', think: 'Une dizaine de secondes d’attention. C’est parti.', att: 95, dur: 1900 },
+      { spot: 'title', think: '« Des solutions innovantes »… pour qui ? Pour quoi ?', att: 78, dur: 2300 },
+      { spot: 'sub', think: '« Transformation digitale »… toujours aucune réponse.', att: 62, dur: 2200 },
+      { spot: 'cards', think: 'Innovation, Expertise, Accompagnement… tout le monde dit ça.', att: 42, dur: 2300 },
+      { spot: 'cta', think: '« En savoir plus » — sur quoi, exactement ?', att: 22, dur: 2200 },
+      { spot: 'nav', think: 'Le blog ? Non. Je n’ai pas le temps.', att: 8, dur: 1900 },
+    ],
+  },
+  apres: {
+    verdict: 'Demande envoyée à 0:14 — avec 68 % d’attention encore disponible.',
+    issue: 'converti',
+    steps: [
+      { spot: 'kicker', think: '« Hôtels indépendants, 15 à 80 chambres » — c’est moi.', att: 96, dur: 2100 },
+      { spot: 'title', think: '« Vos chambres partent au mauvais prix. » C’est exactement ma crainte du dimanche soir.', att: 90, dur: 2600 },
+      { spot: 'sub', think: 'Sans changer de PMS — bien, je garde mon outil.', att: 85, dur: 2100 },
+      { spot: 'form', think: 'Une seule question ? Facile.', att: 80, dur: 1800 },
+      { spot: 'reassure', think: '« Sans accès à vos systèmes » — d’accord, rien de risqué.', att: 74, dur: 2100 },
+      { spot: 'cta', think: '« Estimer mon manque à gagner » — ce chiffre, je le veux.', att: 68, dur: 2100 },
+    ],
+  },
+};
+---
+
+<div class="sim" id="sim" data-version="avant">
+  <div class="sim-bar">
+    <p class="sim-note mono">
+      Simulation — un visiteur humain, une dizaine de secondes d'attention.
+      Exemple volontairement fictif.
+    </p>
+    <div class="sim-controls">
+      <div class="sim-switch" role="group" aria-label="Choisir la version simulée">
+        <button
+          type="button"
+          class="sim-tab"
+          id="tab-avant"
+          aria-pressed="true"
+          data-version="avant"
+          data-track="sim-avant"
+        >
+          Page template
+        </button>
+        <button
+          type="button"
+          class="sim-tab"
+          id="tab-apres"
+          aria-pressed="false"
+          data-version="apres"
+          data-track="sim-apres"
+        >
+          Page conçue
+        </button>
+      </div>
+      <button type="button" class="sim-replay" id="sim-replay" data-track="sim-rejouer" hidden>
+        ↻ Rejouer
+      </button>
+    </div>
+  </div>
+
+  <div class="sim-body">
+    <!-- ============ Scène : les deux maquettes ============ -->
+    <div class="sim-stage" id="sim-stage">
+      <!-- Version template -->
+      <div class="mock" id="panel-avant" aria-labelledby="tab-avant">
+        <div class="mock-nav" data-spot="nav">
+          <span class="mock-logo">MERIDIEM</span>
+          <span class="mock-links" aria-hidden="true">Accueil · Services · Équipe · Blog · Contact</span>
+        </div>
+        <div class="mock-hero mock-hero--avant">
+          <p class="mock-h1-avant" data-spot="title">Des solutions innovantes pour l'hôtellerie de demain</p>
+          <p class="mock-sub-avant" data-spot="sub">
+            Nous accompagnons votre transformation digitale grâce à une
+            approche sur mesure et des outils performants.
+          </p>
+          <div class="mock-ctas-avant" data-spot="cta">
+            <span class="mock-btn-avant">En savoir plus</span>
+            <span class="mock-btn-avant mock-btn-avant--alt">Contact</span>
+          </div>
+        </div>
+        <div class="mock-cards" data-spot="cards" aria-hidden="true">
+          <div class="mock-card"><span class="mock-ico"></span>Innovation</div>
+          <div class="mock-card"><span class="mock-ico"></span>Expertise</div>
+          <div class="mock-card"><span class="mock-ico"></span>Accompagnement</div>
+        </div>
+      </div>
+
+      <!-- Version conçue -->
+      <div class="mock" id="panel-apres" aria-labelledby="tab-apres" hidden>
+        <div class="mock-nav mock-nav--apres" data-spot="nav">
+          <span class="mock-logo mock-logo--apres">Meridiem</span>
+          <span class="mock-cta-mini">Estimer mon manque à gagner</span>
+        </div>
+        <div class="mock-hero">
+          <p class="mock-kicker" data-spot="kicker">Pour les hôtels indépendants de 15 à 80 chambres</p>
+          <p class="mock-h1-apres" data-spot="title">
+            Vos chambres partent au mauvais prix. Meridiem les réajuste chaque nuit.
+          </p>
+          <p class="mock-sub-apres" data-spot="sub">
+            Un pilotage tarifaire opéré pour vous — sans changer de PMS, sans
+            embaucher de revenue manager. Installation en 10 jours.
+          </p>
+          <div class="mock-form-apres" data-spot="form" aria-hidden="true">
+            <span class="mock-field">Votre nombre de chambres</span>
+            <span class="mock-btn-apres" data-spot="cta">Estimer mon manque à gagner</span>
+          </div>
+          <p class="mock-reassure" data-spot="reassure">Estimation en 48 h — sans accès à vos systèmes.</p>
+        </div>
+      </div>
+
+      <!-- Calques de simulation (inertes sans JS) -->
+      <div class="sim-gaze" id="sim-gaze" aria-hidden="true" hidden></div>
+      <div class="sim-dot" id="sim-dot" aria-hidden="true" hidden></div>
+      <div class="sim-verdict" id="sim-verdict" hidden>
+        <p class="sim-verdict-issue" id="sim-verdict-issue"></p>
+        <p class="sim-verdict-text" id="sim-verdict-text"></p>
+      </div>
+    </div>
+
+    <!-- ============ Le visiteur : attention + pensées ============ -->
+    <aside class="sim-mind" aria-label="Ce que vit le visiteur simulé">
+      <div class="sim-att">
+        <div class="sim-att-head">
+          <span class="mono sim-att-label">Attention restante</span>
+          <span class="mono sim-att-value" id="sim-att-value">100 %</span>
+        </div>
+        <div class="sim-att-bar" role="presentation">
+          <div class="sim-att-fill" id="sim-att-fill"></div>
+        </div>
+      </div>
+
+      {
+        (['avant', 'apres'] as const).map((v) => (
+          <div
+            class="sim-thoughts"
+            id={`thoughts-${v}`}
+            data-verdict={scenarios[v].verdict}
+            data-issue={scenarios[v].issue}
+            hidden={v === 'apres'}
+          >
+            <p class="sim-thoughts-title mono">Pensées du visiteur</p>
+            <ol class="list-plain sim-feed" aria-live="polite">
+              {scenarios[v].steps.map((step) => (
+                <li
+                  class="sim-thought"
+                  data-spot={step.spot}
+                  data-att={step.att}
+                  data-dur={step.dur}
+                >
+                  {step.think}
+                </li>
+              ))}
+              <li class="sim-thought sim-thought--verdict" data-verdict-line>
+                {scenarios[v].verdict}
+              </li>
+            </ol>
+          </div>
+        ))
+      }
+    </aside>
+  </div>
+
+  <p class="sim-caption">
+    Même entreprise, même offre, même outil de publication. Seule différence :
+    les décisions prises avant d'ouvrir l'éditeur — c'est exactement ce
+    travail de conception que vous achetez.
+  </p>
+</div>
+
+<style>
+  .sim {
+    border: var(--hairline);
+    border-radius: var(--radius);
+    background: var(--glass);
+    overflow: hidden;
+  }
+
+  .sim-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-4) var(--space-6);
+    border-bottom: var(--hairline);
+  }
+
+  .sim-note {
+    margin: 0;
+    font-size: var(--text-xs);
+    color: var(--ink-faint);
+    letter-spacing: 0.06em;
+    max-width: 32rem;
+  }
+
+  .sim-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .sim-switch {
+    display: inline-flex;
+    border: 1px solid color-mix(in srgb, var(--ink) 30%, transparent);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+  }
+
+  .sim-tab {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.6em 1.2em;
+    background: transparent;
+    border: 0;
+    color: var(--ink);
+    cursor: pointer;
+    transition: background var(--speed) var(--ease), color var(--speed) var(--ease);
+  }
+
+  .sim-tab[aria-pressed='true'] {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .sim-replay {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.6em 1.2em;
+    background: transparent;
+    border: 1px solid color-mix(in srgb, var(--vermillon) 55%, transparent);
+    border-radius: var(--radius-pill);
+    color: var(--vermillon-ink);
+    cursor: pointer;
+    transition: background var(--speed) var(--ease);
+  }
+
+  .sim-replay:hover {
+    background: color-mix(in srgb, var(--vermillon) 12%, transparent);
+  }
+
+  .sim-body {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: var(--space-6);
+    padding: clamp(1rem, 3vw, 2rem);
+  }
+
+  /* ----- scène ----- */
+  .sim-stage {
+    position: relative;
+  }
+
+  /* Les maquettes sont des mini-pages web claires : palette figée,
+     indépendante du thème sombre du site. */
+  .mock {
+    border: 1px solid #e3e4e8;
+    border-radius: 10px;
+    background: #fff;
+    color: #3a3c42;
+    box-shadow: 0 14px 44px rgb(0 0 0 / 0.4);
+    overflow: hidden;
+  }
+
+  .mock-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+    padding: 0.85rem 1.2rem;
+    border-bottom: 1px solid #e9eaee;
+    font-size: 0.7rem;
+  }
+
+  .mock-logo {
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #3a3c42;
+  }
+
+  .mock-logo--apres {
+    letter-spacing: -0.01em;
+    font-size: 0.85rem;
+    color: #14161a;
+  }
+
+  .mock-links {
+    color: #9a9da6;
+    font-size: 0.62rem;
+  }
+
+  .mock-hero {
+    padding: 1.6rem 1.4rem 1.5rem;
+    max-width: 30rem;
+  }
+
+  .mock-hero--avant {
+    text-align: center;
+    max-width: none;
+    padding-bottom: 1rem;
+  }
+
+  .mock-h1-avant {
+    font-family: var(--font-mono);
+    font-size: clamp(0.9rem, 2vw, 1.2rem);
+    font-weight: 700;
+    margin: 0 auto 0.7rem;
+    max-width: 24rem;
+    color: #3a3c42;
+  }
+
+  .mock-sub-avant {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: #8f929c;
+    max-width: 21rem;
+    margin: 0 auto 1rem;
+  }
+
+  .mock-ctas-avant {
+    display: inline-flex;
+    gap: 0.6rem;
+  }
+
+  .mock-btn-avant {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 0.5em 1.1em;
+    border-radius: 6px;
+    background: #b9bcc6;
+    color: #fff;
+  }
+
+  .mock-btn-avant--alt {
+    background: transparent;
+    border: 1px solid #b9bcc6;
+    color: #8f929c;
+  }
+
+  .mock-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+    padding: 0 1.4rem 1.5rem;
+  }
+
+  .mock-card {
+    font-family: var(--font-mono);
+    border: 1px solid #e9eaee;
+    border-radius: 8px;
+    padding: 0.8rem 0.6rem;
+    font-size: 0.6rem;
+    color: #8f929c;
+    text-align: center;
+  }
+
+  .mock-ico {
+    display: block;
+    width: 1rem;
+    height: 1rem;
+    margin: 0 auto 0.45rem;
+    border-radius: 50%;
+    background: #dcdee4;
+  }
+
+  .mock-cta-mini {
+    font-size: 0.6rem;
+    font-weight: 650;
+    padding: 0.5em 0.9em;
+    background: #14161a;
+    color: #f4f5f7;
+    border-radius: 999px;
+  }
+
+  .mock-kicker {
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #1f5f7a;
+    margin: 0 0 0.6rem;
+  }
+
+  .mock-h1-apres {
+    font-size: clamp(1.05rem, 2.6vw, 1.5rem);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.6rem;
+    color: #14161a;
+  }
+
+  .mock-sub-apres {
+    font-size: 0.72rem;
+    color: #565963;
+    margin: 0 0 1rem;
+  }
+
+  .mock-form-apres {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .mock-field {
+    flex: 1 1 9rem;
+    font-size: 0.65rem;
+    color: #9a9da6;
+    border: 1px solid #dcdee4;
+    border-radius: 8px;
+    padding: 0.55em 0.8em;
+    background: #fff;
+  }
+
+  .mock-btn-apres {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.55em 1em;
+    background: #1f5f7a;
+    color: #fff;
+    border-radius: 8px;
+    white-space: nowrap;
+  }
+
+  .mock-reassure {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: #8f929c;
+    margin: 0;
+  }
+
+  /* ----- calques : regard, curseur, verdict ----- */
+  .sim-gaze {
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    pointer-events: none;
+    background: radial-gradient(
+      circle 5.5rem at var(--gx, 50%) var(--gy, 30%),
+      transparent 0 4rem,
+      rgb(7 8 10 / 0.52) 8rem
+    );
+    transition: opacity 400ms var(--ease);
+  }
+
+  .sim-dot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--vermillon-ink);
+    border: 2px solid #fff;
+    box-shadow: 0 2px 10px rgb(0 0 0 / 0.45);
+    pointer-events: none;
+    translate: var(--dx, 50%) var(--dy, 40%);
+  }
+
+  .sim-verdict[hidden],
+  .sim-gaze[hidden],
+  .sim-dot[hidden] {
+    display: none;
+  }
+
+  .sim-verdict {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    gap: var(--space-2);
+    text-align: center;
+    background: rgb(7 8 10 / 0.82);
+    backdrop-filter: blur(4px);
+    border-radius: 10px;
+    padding: var(--space-6);
+  }
+
+  .sim-verdict-issue {
+    font-size: var(--text-2xl);
+    font-weight: 680;
+    letter-spacing: -0.03em;
+    margin: 0;
+  }
+
+  .sim-verdict[data-issue='perdu'] .sim-verdict-issue {
+    color: #ff9d8a;
+  }
+
+  .sim-verdict[data-issue='converti'] .sim-verdict-issue {
+    color: #9fe8c8;
+  }
+
+  .sim-verdict-text {
+    color: var(--ink-soft);
+    font-size: var(--text-sm);
+    margin: 0;
+    max-width: 22rem;
+  }
+
+  /* ----- le visiteur ----- */
+  .sim-mind {
+    display: grid;
+    gap: var(--space-6);
+    align-content: start;
+  }
+
+  .sim-att-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: var(--space-2);
+  }
+
+  .sim-att-label {
+    font-size: var(--text-xs);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .sim-att-value {
+    font-size: var(--text-sm);
+    color: var(--ink);
+  }
+
+  .sim-att-bar {
+    height: 6px;
+    border-radius: 3px;
+    background: rgb(238 240 243 / 0.12);
+    overflow: hidden;
+  }
+
+  .sim-att-fill {
+    height: 100%;
+    width: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #7fb6d8, #9fd0e8);
+    transition: width 900ms var(--ease), background 400ms var(--ease);
+  }
+
+  .sim-att-fill.is-low {
+    background: linear-gradient(90deg, #c96a52, #e08a72);
+  }
+
+  .sim-thoughts-title {
+    font-size: var(--text-xs);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 var(--space-3);
+  }
+
+  .sim-feed {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .sim-thought {
+    padding: var(--space-3) var(--space-4);
+    border: var(--hairline);
+    border-radius: 12px 12px 12px 4px;
+    background: var(--paper-deep);
+    color: var(--ink-soft);
+    font-size: var(--text-sm);
+    line-height: 1.45;
+  }
+
+  .sim-thought--verdict {
+    border-color: color-mix(in srgb, var(--vermillon) 40%, transparent);
+    color: var(--vermillon-ink);
+  }
+
+  /* Mode direct (piloté par JS) : les pensées apparaissent une à une */
+  .sim.is-live .sim-thought {
+    display: none;
+  }
+
+  .sim.is-live .sim-thought.is-said {
+    display: block;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .sim.is-live .sim-thought.is-said {
+      animation: thought-in 360ms var(--ease) both;
+    }
+  }
+
+  @keyframes thought-in {
+    from {
+      opacity: 0;
+      translate: 0 8px;
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+
+  .sim-caption {
+    margin: 0;
+    padding: var(--space-4) var(--space-6);
+    border-top: var(--hairline);
+    font-size: var(--text-sm);
+    color: var(--ink-soft);
+    max-width: none;
+  }
+
+  @media (max-width: 56rem) {
+    .sim-body {
+      grid-template-columns: 1fr;
+    }
+
+    .mock-cards {
+      grid-template-columns: 1fr;
+      gap: 0.45rem;
+    }
+
+    .mock-card {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-align: left;
+      padding: 0.55rem 0.8rem;
+    }
+
+    .mock-ico {
+      margin: 0;
+    }
+  }
+</style>
+
+<script>
+  const sim = document.getElementById('sim')!;
+  const stage = document.getElementById('sim-stage')!;
+  const gaze = document.getElementById('sim-gaze') as HTMLElement;
+  const dot = document.getElementById('sim-dot') as HTMLElement;
+  const verdictBox = document.getElementById('sim-verdict') as HTMLElement;
+  const verdictIssue = document.getElementById('sim-verdict-issue')!;
+  const verdictText = document.getElementById('sim-verdict-text')!;
+  const attFill = document.getElementById('sim-att-fill') as HTMLElement;
+  const attValue = document.getElementById('sim-att-value')!;
+  const replayBtn = document.getElementById('sim-replay') as HTMLButtonElement;
+  const tabs = Array.from(sim.querySelectorAll<HTMLButtonElement>('.sim-tab'));
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let timers: ReturnType<typeof setTimeout>[] = [];
+  let running = false;
+
+  // Interpolation douce du regard (les custom properties CSS ne se
+  // transitionnent pas : on lisse en rAF, uniquement pendant la lecture).
+  const gazePos = { x: 0, y: 0, tx: 0, ty: 0, raf: 0 };
+
+  function gazeTick() {
+    gazePos.x += (gazePos.tx - gazePos.x) * 0.12;
+    gazePos.y += (gazePos.ty - gazePos.y) * 0.12;
+    gaze.style.setProperty('--gx', `${gazePos.x}px`);
+    gaze.style.setProperty('--gy', `${gazePos.y}px`);
+    dot.style.setProperty('--dx', `${gazePos.x + 18}px`);
+    dot.style.setProperty('--dy', `${gazePos.y + 14}px`);
+    if (Math.abs(gazePos.tx - gazePos.x) > 0.5 || Math.abs(gazePos.ty - gazePos.y) > 0.5) {
+      gazePos.raf = requestAnimationFrame(gazeTick);
+    } else {
+      gazePos.raf = 0;
+    }
+  }
+
+  function gazeTarget(x: number, y: number, jump = false) {
+    gazePos.tx = x;
+    gazePos.ty = y;
+    if (jump) {
+      gazePos.x = x;
+      gazePos.y = y;
+    }
+    if (!gazePos.raf) gazePos.raf = requestAnimationFrame(gazeTick);
+  }
+
+  function clearTimers() {
+    timers.forEach(clearTimeout);
+    timers = [];
+    if (gazePos.raf) {
+      cancelAnimationFrame(gazePos.raf);
+      gazePos.raf = 0;
+    }
+  }
+
+  function panel(version: string) {
+    return document.getElementById(`panel-${version}`) as HTMLElement;
+  }
+
+  function thoughtsBox(version: string) {
+    return document.getElementById(`thoughts-${version}`) as HTMLElement;
+  }
+
+  function setAttention(value: number) {
+    attFill.style.width = `${value}%`;
+    attFill.classList.toggle('is-low', value < 35);
+    attValue.textContent = `${Math.round(value)} %`;
+  }
+
+  function moveGazeTo(spot: string, version: string, jump = false) {
+    const target = panel(version).querySelector<HTMLElement>(`[data-spot="${spot}"]`);
+    if (!target) return;
+    const stageRect = stage.getBoundingClientRect();
+    const rect = target.getBoundingClientRect();
+    gazeTarget(
+      rect.left - stageRect.left + rect.width / 2,
+      rect.top - stageRect.top + rect.height / 2,
+      jump
+    );
+  }
+
+  function showVersion(version: string) {
+    for (const t of tabs) {
+      const on = t.dataset.version === version;
+      t.setAttribute('aria-pressed', String(on));
+    }
+    panel('avant').hidden = version !== 'avant';
+    panel('apres').hidden = version !== 'apres';
+    thoughtsBox('avant').hidden = version !== 'avant';
+    thoughtsBox('apres').hidden = version !== 'apres';
+    sim.dataset.version = version;
+  }
+
+  function play(version: string) {
+    clearTimers();
+    running = true;
+    showVersion(version);
+    verdictBox.hidden = true;
+    gaze.hidden = false;
+    dot.hidden = false;
+    replayBtn.hidden = true;
+    setAttention(100);
+
+    const box = thoughtsBox(version);
+    const thoughts = Array.from(box.querySelectorAll<HTMLElement>('.sim-thought'));
+    thoughts.forEach((t) => t.classList.remove('is-said'));
+
+    const steps = thoughts.filter((t) => !t.hasAttribute('data-verdict-line'));
+    const verdictLine = box.querySelector<HTMLElement>('[data-verdict-line]')!;
+
+    // Point de départ : le regard arrive sur la navigation.
+    moveGazeTo(steps[0]?.dataset.spot || 'nav', version, true);
+
+    let elapsed = 400;
+    for (const step of steps) {
+      const spot = step.dataset.spot!;
+      const att = Number(step.dataset.att);
+      const dur = Number(step.dataset.dur);
+      timers.push(
+        setTimeout(() => {
+          moveGazeTo(spot, version);
+          step.classList.add('is-said');
+          setAttention(att);
+          step.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }, elapsed)
+      );
+      elapsed += dur;
+    }
+
+    timers.push(
+      setTimeout(() => {
+        verdictLine.classList.add('is-said');
+        const issue = box.dataset.issue!;
+        verdictIssue.textContent = issue === 'perdu' ? 'Visiteur perdu.' : 'Demande envoyée.';
+        verdictText.textContent = box.dataset.verdict!;
+        verdictBox.dataset.issue = issue;
+        verdictBox.hidden = false;
+        gaze.hidden = true;
+        dot.hidden = true;
+        replayBtn.hidden = false;
+        if (issue === 'perdu') setAttention(0);
+        running = false;
+      }, elapsed + 300)
+    );
+  }
+
+  // Sans animation : tout le storyboard reste visible, on ne « joue » rien.
+  if (!reduced) {
+    sim.classList.add('is-live');
+
+    // Démarre à la première apparition à l'écran.
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          io.disconnect();
+          play(sim.dataset.version || 'avant');
+          if (typeof (window as any).track === 'function') (window as any).track('sim-lancee');
+        }
+      },
+      { threshold: 0.45 }
+    );
+    io.observe(sim);
+
+    replayBtn.addEventListener('click', () => play(sim.dataset.version || 'avant'));
+    tabs.forEach((tab) =>
+      tab.addEventListener('click', () => play(tab.dataset.version!))
+    );
+  } else {
+    // Reduced motion : bascule statique entre les deux storyboards.
+    tabs.forEach((tab) =>
+      tab.addEventListener('click', () => showVersion(tab.dataset.version!))
+    );
+  }
+</script>

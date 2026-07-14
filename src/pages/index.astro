@@ -1,7 +1,7 @@
 ---
 import Base from '@/layouts/Base.astro';
 import SectionHead from '@/components/SectionHead.astro';
-import CompareDemo from '@/components/CompareDemo.astro';
+import HumanSim from '@/components/HumanSim.astro';
 import Annotation from '@/components/Annotation.astro';
 import BackstageToggle from '@/components/BackstageToggle.astro';
 import CtaBand from '@/components/CtaBand.astro';
@@ -134,6 +134,7 @@ const etapes = [
   <!-- ============ HERO ============ -->
   <section class="hero annotated" aria-label="Introduction">
     <div class="hero-aurora" aria-hidden="true"></div>
+    <canvas class="hero-field" id="hero-field" aria-hidden="true"></canvas>
     <div class="hero-horizon" aria-hidden="true"></div>
     <div class="container hero-inner">
 
@@ -280,9 +281,9 @@ const etapes = [
         no="02"
         kicker="La démonstration"
         title="La même offre, deux pages. Regardez ce que change la conception."
-        lede="Plutôt que de vous le raconter, voici l'écart entre une page « remplie » et une page conçue — sur un exemple volontairement fictif."
+        lede="Nous avons simulé un visiteur humain — son regard, ses pensées, son attention qui s'épuise. Regardez-le vivre les deux versions d'une même offre : la page template le perd, la page conçue le convertit."
       />
-      <CompareDemo />
+      <HumanSim />
       <div class="backstage-invite">
         <p>
           <strong>Et cette page-ci ?</strong> Elle s'applique le même
@@ -544,6 +545,14 @@ const etapes = [
     position: absolute;
     inset: 0;
     background: var(--aurora);
+    pointer-events: none;
+  }
+
+  .hero-field {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     pointer-events: none;
   }
 
@@ -1034,3 +1043,148 @@ const etapes = [
     }
   }
 </style>
+
+<script>
+  // Ciel de nuit vivant — constellation interactive du hero.
+  // Canvas 2D léger : ~90 étoiles dérivantes, liens de proximité, attirance
+  // douce vers le pointeur. Coupé si prefers-reduced-motion, hors écran,
+  // onglet caché ou pointeur grossier (mobile : version calme sans liens).
+  const canvas = document.getElementById('hero-field') as HTMLCanvasElement | null;
+  const motionOk = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (canvas && motionOk) {
+    const field = canvas;
+    const ctx = field.getContext('2d')!;
+    const fine = window.matchMedia('(pointer: fine)').matches;
+    const hero = field.parentElement as HTMLElement;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    let w = 0;
+    let h = 0;
+    let raf = 0;
+    let visible = false;
+    const pointer = { x: -9999, y: -9999 };
+
+    interface Star {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      r: number;
+      a: number;
+    }
+
+    let stars: Star[] = [];
+
+    function resize() {
+      const rect = hero.getBoundingClientRect();
+      w = rect.width;
+      h = rect.height;
+      field.width = Math.round(w * dpr);
+      field.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const count = fine ? Math.min(110, Math.round((w * h) / 16000)) : 45;
+      stars = Array.from({ length: count }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.16,
+        vy: (Math.random() - 0.5) * 0.16,
+        r: 0.6 + Math.random() * 1.3,
+        a: 0.25 + Math.random() * 0.5,
+      }));
+    }
+
+    function frame() {
+      ctx.clearRect(0, 0, w, h);
+      const linkDist = 110;
+
+      for (const s of stars) {
+        // dérive + attirance très douce vers le pointeur
+        if (fine) {
+          const dx = pointer.x - s.x;
+          const dy = pointer.y - s.y;
+          const d2 = dx * dx + dy * dy;
+          if (d2 < 180 * 180 && d2 > 1) {
+            const f = 0.012 / Math.sqrt(d2);
+            s.vx += dx * f;
+            s.vy += dy * f;
+          }
+        }
+        s.vx *= 0.985;
+        s.vy *= 0.985;
+        s.x += s.vx + 0.02;
+        s.y += s.vy;
+        if (s.x > w + 8) s.x = -8;
+        if (s.x < -8) s.x = w + 8;
+        if (s.y > h + 8) s.y = -8;
+        if (s.y < -8) s.y = h + 8;
+      }
+
+      if (fine) {
+        ctx.lineWidth = 1;
+        for (let i = 0; i < stars.length; i++) {
+          for (let j = i + 1; j < stars.length; j++) {
+            const a = stars[i]!;
+            const b = stars[j]!;
+            const dx = a.x - b.x;
+            const dy = a.y - b.y;
+            const d2 = dx * dx + dy * dy;
+            if (d2 < linkDist * linkDist) {
+              const alpha = (1 - Math.sqrt(d2) / linkDist) * 0.14;
+              ctx.strokeStyle = `rgba(159, 208, 232, ${alpha.toFixed(3)})`;
+              ctx.beginPath();
+              ctx.moveTo(a.x, a.y);
+              ctx.lineTo(b.x, b.y);
+              ctx.stroke();
+            }
+          }
+        }
+      }
+
+      for (const s of stars) {
+        ctx.fillStyle = `rgba(238, 240, 243, ${s.a})`;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      raf = requestAnimationFrame(frame);
+    }
+
+    function start() {
+      if (!raf && visible && !document.hidden) raf = requestAnimationFrame(frame);
+    }
+
+    function stop() {
+      if (raf) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+    }
+
+    resize();
+    addEventListener('resize', resize, { passive: true });
+    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+
+    new IntersectionObserver((entries) => {
+      visible = entries.some((e) => e.isIntersecting);
+      visible ? start() : stop();
+    }).observe(hero);
+
+    if (fine) {
+      hero.addEventListener(
+        'pointermove',
+        (e) => {
+          const rect = hero.getBoundingClientRect();
+          pointer.x = e.clientX - rect.left;
+          pointer.y = e.clientY - rect.top;
+        },
+        { passive: true }
+      );
+      hero.addEventListener('pointerleave', () => {
+        pointer.x = -9999;
+        pointer.y = -9999;
+      });
+    }
+  }
+</script>
